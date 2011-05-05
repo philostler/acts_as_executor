@@ -3,39 +3,43 @@ module ActsAsExecutor
     module Executor
       module InstanceMethods
         def self.included base
-          base.after_destroy :shutdown
           base.after_find :startup
           base.after_save :startup
           base.after_update :update
+          base.after_destroy :shutdown
         end
 
-        protected
         @@executors = Hash.new
 
         def executor
           @@executors[id]
         end
-
-        private
         def executor= executor
           @@executors[id] = executor
         end
 
-        def shutdown
-          unless self.executor
-            p "SHUTDOWN"
-          end
-        end
-
         def startup
           unless self.executor
-            p "STARTUP"
-            self.executor = true
+            ActsAsExecutor.log.info "STARTUP"
+            self.executor = ActsAsExecutor::Model::Executor::Factory.create kind, size
           end
         end
 
         def update
-          p "UPDATE"
+          ActsAsExecutor.log.info "UPDATE"
+        end
+
+        def shutdown
+          if self.executor
+            ActsAsExecutor.log.info "SHUTDOWN"
+            begin
+              self.executor.shutdown
+            rescue Java::java.lang.RuntimePermission
+              ActsAsExecutor.log.info "RuntimePermission"
+            rescue Java::java.lang.SecurityException
+              ActsAsExecutor.log.info "SecurityException"
+            end
+          end
         end
       end
     end
