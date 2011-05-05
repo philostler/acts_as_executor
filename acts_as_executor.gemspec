@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Phil Ostler"]
   s.email       = ["philostler@gmail.com"]
   s.homepage    = "https://github.com/philostler/acts_as_executor"
-  s.summary     = %q{Java Executor framework wrapper for JRuby}
-  s.description = %q{Wrapper for Java's Executor framework enabling seamless integration with JRuby on Rails}
+  s.summary     = %q{Java Executor framework integration for Rails}
+  s.description = %q{Seamless integration of Java's Executor framework for JRuby on Rails}
 
   s.files         = Dir["**/*.rb"]
   s.require_paths = ["lib"]
