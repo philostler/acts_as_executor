@@ -3,6 +3,7 @@ module ActsAsExecutor
     module Executor
       module Base
         def acts_as_executor
+          send :include, ActsAsExecutor::Model::Executor::Associations
           send :include, ActsAsExecutor::Model::Executor::InstanceMethods
           send :include, ActsAsExecutor::Model::Executor::Validations
 
