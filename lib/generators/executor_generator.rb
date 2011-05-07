@@ -5,6 +5,7 @@ class ExecutorGenerator < Rails::Generators::NamedBase
 
   def models
     template File.join("models", "executor.rb"), File.join("app", "models", file_name + ".rb")
+    template File.join("models", "executor_task.rb"), File.join("app", "models", file_name + "_task.rb")
   end
 
   def migration
