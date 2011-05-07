@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email       = ["philostler@gmail.com"]
   s.homepage    = "https://github.com/philostler/acts_as_executor"
   s.summary     = %q{Java Executor framework integration for Rails}
-  s.description = %q{Seamless integration of Java's Executor framework for JRuby on Rails}
+  s.description = %q{Seamless integration of Java's Executor framework with JRuby on Rails}
 
   s.files         = Dir["**/*.rb"]
   s.require_paths = ["lib"]
