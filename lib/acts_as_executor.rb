@@ -7,6 +7,8 @@ require "acts_as_executor/model/executor/validations"
 
 require "acts_as_executor/model/task/associations"
 require "acts_as_executor/model/task/base"
+require "acts_as_executor/model/task/schedules"
+require "acts_as_executor/model/task/units"
 require "acts_as_executor/model/task/validations"
 
 require "acts_as_executor/validators/class_exists_validator"
