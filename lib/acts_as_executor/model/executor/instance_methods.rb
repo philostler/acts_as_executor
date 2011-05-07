@@ -20,8 +20,9 @@ module ActsAsExecutor
 
         def startup
           unless self.executor
-            ActsAsExecutor.log.info "STARTUP"
+            ActsAsExecutor.log.debug "Executor \"" + name + "\" starting up..."
             self.executor = ActsAsExecutor::Model::Executor::Factory.create kind, size
+            ActsAsExecutor.log.info "Executor \"" + name + "\" has completed startup"
           end
         end
 
@@ -31,14 +32,15 @@ module ActsAsExecutor
 
         def shutdown
           if self.executor
-            ActsAsExecutor.log.info "SHUTDOWN"
+            ActsAsExecutor.log.debug "Executor \"" + name + "\" shutting down..."
             begin
               self.executor.shutdown
             rescue Java::java.lang.RuntimePermission
-              ActsAsExecutor.log.info "RuntimePermission"
+              ActsAsExecutor.log.error "Executor \"" + name + "\" has experienced a RuntimePermission error"
             rescue Java::java.lang.SecurityException
-              ActsAsExecutor.log.info "SecurityException"
+              ActsAsExecutor.log.error "Executor \"" + name + "\" has experienced a SecurityException error"
             end
+            ActsAsExecutor.log.info "Executor \"" + name + "\" has completed shutdown"
           end
         end
       end
