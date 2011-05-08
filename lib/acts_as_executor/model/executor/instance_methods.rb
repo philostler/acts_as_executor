@@ -9,6 +9,10 @@ module ActsAsExecutor
           base.after_destroy :shutdown
         end
 
+        def schedulable?
+          ActsAsExecutor::Model::Executor::Kinds::ALL_SCHEDULED.include? kind
+        end
+
         @@executors = Hash.new
 
         def executor
