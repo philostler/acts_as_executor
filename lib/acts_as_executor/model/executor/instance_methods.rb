@@ -23,22 +23,33 @@ module ActsAsExecutor
         end
 
         def submit task
-          clazz = task.clazz.constantize.new
+          begin
+            clazz = task.clazz.constantize.new
+          rescue NameError
+            ActsAsExecutor.log.error "Executor \"" + name + "\" attaching task \"" + task.clazz + "\" could not create class"            
+          end
+
+          if task.arguments
+            task.arguments.each_pair do |k, v|
+              attribute = "#{k}="
+              clazz.send attribute, v if clazz.respond_to? attribute
+            end
+          end
 
           begin
-            case self.executor
+            case @executor
               when Java::java.util.concurrent.ScheduledExecutorService
                 unit = Java::java.util.concurrent.TimeUnit.value_of(task.unit.upcase)
                 case task.schedule
                   when ActsAsExecutor::Model::Task::Schedules::ONE_SHOT
-                    self.executor.schedule clazz, task.start, unit
+                    @executor.schedule clazz, task.start, unit
                   when ActsAsExecutor::Model::Task::Schedules::FIXED_DELAY
-                    self.executor.schedule_with_fixed_delay clazz, task.start, task.every, unit
+                    @executor.schedule_with_fixed_delay clazz, task.start, task.every, unit
                   when ActsAsExecutor::Model::Task::Schedules::FIXED_RATE
-                    self.executor.schedule_at_fixed_rate clazz, task.start, task.every, unit
+                    @executor.schedule_at_fixed_rate clazz, task.start, task.every, unit
                 end
               when Java::java.util.concurrent.ExecutorService
-                self.executor.submit clazz
+                @executor.submit clazz
             end
           rescue Java::java.lang.NullPointerException
             ActsAsExecutor.log.error "Executor \"" + name + "\" attaching task \"" + task.clazz + "\" threw a NullPointerException"
@@ -50,9 +61,9 @@ module ActsAsExecutor
         end
         
         def startup
-          unless self.executor
+          unless @executor
             ActsAsExecutor.log.debug "Executor \"" + name + "\" starting up..."
-            self.executor = ActsAsExecutor::Model::Executor::Factory.create kind, size
+            @executor = ActsAsExecutor::Model::Executor::Factory.create kind, size
             ActsAsExecutor.log.info "Executor \"" + name + "\" has completed startup"
             
             ActsAsExecutor.log.debug "Executor \"" + name + "\" attaching tasks..."
@@ -68,10 +79,10 @@ module ActsAsExecutor
         end
 
         def shutdown
-          if self.executor
+          if @executor
             ActsAsExecutor.log.debug "Executor \"" + name + "\" shutting down..."
             begin
-              self.executor.shutdown
+              @executor.shutdown
             rescue Java::java.lang.RuntimePermission
               ActsAsExecutor.log.error "Executor \"" + name + "\" has experienced a RuntimePermission error"
             rescue Java::java.lang.SecurityException
