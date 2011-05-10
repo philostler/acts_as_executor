@@ -7,9 +7,13 @@ require "acts_as_executor/model/executor/validations"
 
 require "acts_as_executor/model/task/associations"
 require "acts_as_executor/model/task/base"
+require "acts_as_executor/model/task/instance_methods"
 require "acts_as_executor/model/task/schedules"
 require "acts_as_executor/model/task/units"
 require "acts_as_executor/model/task/validations"
+
+require "acts_as_executor/tasks/http/abstract_http_task"
+require "acts_as_executor/tasks/http/http_download_to_file_task"
 
 require "acts_as_executor/validators/class_exists_validator"
 
