@@ -12,6 +12,6 @@ Gem::Specification.new do |s|
   s.summary     = %q{Java Executor framework integration for Rails}
   s.description = %q{Seamless integration of Java's Executor framework with JRuby on Rails}
 
-  s.files         = Dir["**/*.rb"]
+  s.files         = Dir["**/*.rb"] + Dir["*.rdoc"] + Dir["LICENSE"]
   s.require_paths = ["lib"]
 end
