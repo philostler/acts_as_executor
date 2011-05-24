@@ -1,0 +1,50 @@
+=acts_as_executor
+acts_as_executor seamlessly integrates Java's Executor framework with JRuby on Rails, giving an application the ability to interact with executors in a familiar Rails'eque way.
+
+==Features
+* Database persisted, scheduled executor and task configurations 
+
+==Getting Started
+Rails 3 Gemfile
+  gem "acts_as_executor"
+Install via
+  gem install acts_as_executor
+  # or
+  bundle install
+
+====Generate & Migrate
+  rails generate executor <ModelName>
+
+  e.g.
+  rails generate executor Executor
+      create  app/models/executor.rb
+      create  app/models/executor_task.rb
+      create  db/migrate/20110523205511_create_executors.rb
+  rake db:migrate
+
+====Seed
+  e = Executor.create(:name => "background_processing",
+                      :kind => ActsAsExecutor::Executor::Kinds::SCHEDULED,
+                      :size => 4)
+  e.tasks.create(:clazz => "HelloWorldTask",
+                 :arguments => { :message => "This is my argument message" },
+                 :schedule => ActsAsExecutor::Task::Schedules::FIXED_DELAY,
+                 :start => 1,
+                 :every => 5,
+                 :units => ActsAsExecutor::Common::Units::SECONDS)
+
+====Example Task
+  class HelloWorldTask
+    include Java::java.lang.Runnable
+  
+    attr_accessor :message
+
+    def run
+      p "Hello World. " + message
+    end
+  end
+
+==What's New in Release 1.0.0.beta1
+* Automatic startup only on Rails start. e.g. rake tasks don't trigger executor startup
+* Arguments can now be passed to tasks
+* Logging to <tt>Rails.logger</tt>
