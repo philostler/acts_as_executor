@@ -50,14 +50,26 @@ module ActsAsExecutor
           end
 
           begin
-            units = Java::java.util.concurrent.TimeUnit.value_of(task.units.upcase)
-            case task.schedule
-              when ActsAsExecutor::Task::Schedules::ONE_SHOT
-                self.executor.schedule clazz, task.start, units
-              when ActsAsExecutor::Task::Schedules::FIXED_DELAY
-                self.executor.schedule_with_fixed_delay clazz, task.start, task.every, units
-              when ActsAsExecutor::Task::Schedules::FIXED_RATE
-                self.executor.schedule_at_fixed_rate clazz, task.start, task.every, units
+            case self.executor
+              when Java::java.util.concurrent.ScheduledExecutorService
+                units = Java::java.util.concurrent.TimeUnit.value_of(task.units.upcase)
+                case task.schedule
+                  when ActsAsExecutor::Task::Schedules::ONE_SHOT
+                    self.executor.schedule clazz, task.start, units
+                  when ActsAsExecutor::Task::Schedules::FIXED_DELAY
+                    self.executor.schedule_with_fixed_delay clazz, task.start, task.every, units
+                  when ActsAsExecutor::Task::Schedules::FIXED_RATE
+                    self.executor.schedule_at_fixed_rate clazz, task.start, task.every, units
+                end
+              when Java::java.util.concurrent.ExecutorService
+                case clazz
+                  when Java::java.util.concurrent.Callable
+                    future_task = ActsAsExecutor::Executor::FutureTask.new clazz
+                  when Java::java.lang.Runnable
+                    future_task = ActsAsExecutor::Executor::FutureTask.new clazz, nil
+                end
+                future_task.task = task
+                self.executor.execute future_task
             end
           rescue Java::java.lang.NullPointerException
             ActsAsExecutor.log.error "Executor \"" + name + "\" attaching task \"" + task.clazz + "\" threw a NullPointerException"
