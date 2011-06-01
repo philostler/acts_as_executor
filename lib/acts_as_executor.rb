@@ -1,6 +1,7 @@
 require "acts_as_executor/common/units"
 
 require "acts_as_executor/executor/factory"
+require "acts_as_executor/executor/future_task"
 require "acts_as_executor/executor/kinds"
 
 require "acts_as_executor/executor/model/actions"
