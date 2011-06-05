@@ -13,12 +13,8 @@ module ActsAsExecutor
           ActsAsExecutor.log.debug "Executor \"" + name + "\" starting up..."
           self.executor = ActsAsExecutor::Executor::Factory.create kind, size
           ActsAsExecutor.log.info "Executor \"" + name + "\" has completed startup"
-          
-          ActsAsExecutor.log.debug "Executor \"" + name + "\" attaching tasks..."
-          tasks.each do |t|
-            submit t
-          end
-          ActsAsExecutor.log.info "Executor \"" + name + "\" has completed attaching tasks"
+
+          tasks.all
         end
 
         def shutdown
@@ -33,47 +29,34 @@ module ActsAsExecutor
           ActsAsExecutor.log.info "Executor \"" + name + "\" has completed shutdown"
         end
 
-        def submit task
-          begin
-            clazz = task.clazz.constantize.new
-          rescue NameError
-            ActsAsExecutor.log.error "Executor \"" + name + "\" attaching task \"" + task.clazz + "\" could not create class"            
-          end
-
-          if task.arguments
-            task.arguments.each_pair do |k, v|
-              attribute = "#{k}="
-              clazz.send attribute, v if clazz.respond_to? attribute
-            end
-          end
-
+        def execute clazz, schedule, start, every, units
           begin
             if schedulable?
-              units = Java::java.util.concurrent.TimeUnit.value_of(task.units.upcase)
-              case task.schedule
+              units = Java::java.util.concurrent.TimeUnit.value_of(units.upcase)
+              case schedule
                 when ActsAsExecutor::Task::Schedules::ONE_SHOT
-                  self.executor.schedule clazz, task.start, units
+                  future = self.executor.schedule clazz, start, units
                 when ActsAsExecutor::Task::Schedules::FIXED_DELAY
-                  self.executor.schedule_with_fixed_delay clazz, task.start, task.every, units
+                  future = self.executor.schedule_with_fixed_delay clazz, start, every, units
                 when ActsAsExecutor::Task::Schedules::FIXED_RATE
-                  self.executor.schedule_at_fixed_rate clazz, task.start, task.every, units
+                  future = self.executor.schedule_at_fixed_rate clazz, start, every, units
               end
             else
               case clazz
                 when Java::java.util.concurrent.Callable
-                  future_task = ActsAsExecutor::Executor::FutureTask.new clazz
+                  future = ActsAsExecutor::Common::FutureTask.new clazz
                 when Java::java.lang.Runnable
-                  future_task = ActsAsExecutor::Executor::FutureTask.new clazz, nil
+                  future = ActsAsExecutor::Common::FutureTask.new clazz, nil
               end
-              future_task.task = task
-              self.executor.execute future_task
+              self.executor.execute future
             end
-          rescue Java::java.lang.NullPointerException
-            ActsAsExecutor.log.error "Executor \"" + name + "\" attaching task \"" + task.clazz + "\" threw a NullPointerException"
-          rescue Java::java.lang.IllegalArgumentException
-            ActsAsExecutor.log.error "Executor \"" + name + "\" attaching task \"" + task.clazz + "\" threw a IllegalArgumentException"
-          rescue Java::java.util.concurrent.RejectedExecutionException
-            ActsAsExecutor.log.error "Executor \"" + name + "\" attaching task \"" + task.clazz + "\" threw a RejectedExecutionException"
+            return future
+          rescue Java::java.lang.NullPointerException => e
+            ActsAsExecutor.log.error "Executor \"" + name + "\" attaching task threw a NullPointerException. " + e.to_s
+          rescue Java::java.lang.IllegalArgumentException => e
+            ActsAsExecutor.log.error "Executor \"" + name + "\" attaching task threw a IllegalArgumentException. " + e.to_s
+          rescue Java::java.util.concurrent.RejectedExecutionException => e
+            ActsAsExecutor.log.error "Executor \"" + name + "\" attaching task threw a RejectedExecutionException. " + e.to_s
           end
         end
       end
