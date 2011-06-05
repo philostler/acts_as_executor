@@ -3,6 +3,10 @@ class ExecutorGenerator < Rails::Generators::NamedBase
 
   source_root File.expand_path("../templates", __FILE__)
 
+  def initializer
+    template File.join("initializer", "acts_as_executor.rb"), File.join("config", "initializers", "acts_as_executor.rb")
+  end
+
   def models
     template File.join("models", "executor.rb"), File.join("app", "models", file_name + ".rb")
     template File.join("models", "executor_task.rb"), File.join("app", "models", file_name + "_task.rb")
