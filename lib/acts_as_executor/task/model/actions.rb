@@ -24,8 +24,9 @@ module ActsAsExecutor
           end
 
           self.future = executor.execute instance, schedule, start, every, units
-          # if there's a ScheduledFuture there is no task to set thus exception being thrown
-          self.future.task = self
+          if !executor.schedulable?
+            self.future.task = self
+          end
         end
       end
     end
