@@ -2,13 +2,15 @@
 acts_as_executor seamlessly integrates Java's Executor framework with JRuby on Rails, giving an application the ability to interact with executors in a familiar Rails'eque way.
 
 ==Features
-* Database persisted, scheduled executor and task configurations 
+* Database persisted, executor and task configurations 
+* Create and delete both executors and tasks dynamically at runtime
+* Automatic management of completed tasks
 
 ==Getting Started
 Rails 3 Gemfile
   gem "acts_as_executor"
 Install via
-  gem install acts_as_executor
+  gem install acts_as_executor --pre
   # or
   bundle install
 
@@ -17,21 +19,31 @@ Install via
 
   e.g.
   rails generate executor Executor
+      create  config/initializers/acts_as_executor.rb
       create  app/models/executor.rb
       create  app/models/executor_task.rb
-      create  db/migrate/20110523205511_create_executors.rb
+      create  db/migrate/20110601230311_create_executors.rb
   rake db:migrate
 
-====Seed
-  e = Executor.create(:name => "background_processing",
-                      :kind => ActsAsExecutor::Executor::Kinds::SCHEDULED,
-                      :size => 4)
+====Create Executor
+  Executor.create(:name => "cached_executor",
+                  :kind => ActsAsExecutor::Executor::Kinds::CACHED)
+====Create Scheduled Executor
+  Executor.create(:name => "scheduled_executor",
+                  :kind => ActsAsExecutor::Executor::Kinds::SCHEDULED,
+                  :size => 3)
+====Create Task
+  e = Executor.find_by_name("cached_executor")
   e.tasks.create(:clazz => "HelloWorldTask",
-                 :arguments => { :message => "This is my argument message" },
+                 :arguments => { :message => "This is my message")
+====Create Scheduled Task
+  e = Executor.find_by_name("scheduled_executor")
+  e.tasks.create(:clazz => "HelloWorldTask",
+                 :arguments => { :message => "This is my scheduled message" },
                  :schedule => ActsAsExecutor::Task::Schedules::FIXED_DELAY,
                  :start => 1,
                  :every => 5,
-                 :units => ActsAsExecutor::Common::Units::SECONDS)
+                 :units => ActsAsExecutor::Common::Units::MINUTES)
 
 ====Example Task
   class HelloWorldTask
@@ -44,7 +56,12 @@ Install via
     end
   end
 
-==What's New in Release 1.0.0.beta1
-* Automatic startup only on Rails start. e.g. rake tasks don't trigger executor startup
-* Arguments can now be passed to tasks
-* Logging to <tt>Rails.logger</tt>
+==Notes
+Upon a task completing its execution on a non-scheduled executor, the task will be delete from the database. Due to the possiblity that multiple threads may be attempting to delete records simultaneously, it is recommended NOT to use SQLite as a database provider. In this scenario, database locking may occur causing records to fail deletion and thus exist for tasks that have actually completed thier execution.
+
+==What's New in Release 1.0.0.beta2
+* Support for all executor types, scheduled and non-scheduled
+* Executors can be created and deleted at runtime
+* Tasks can be created and added to executors at runtime
+* Automatic management of completed tasks on non-scheduled executors
+* Custom logger can now be set via initializer
