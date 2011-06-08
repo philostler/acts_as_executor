@@ -10,7 +10,7 @@ module ActsAsExecutor
         end
 
         def shutdown_now?
-          if self.executor != nill && ActsAsExecutor.rails_startup?
+          if self.executor != nil && ActsAsExecutor.rails_startup?
             return true
           end
           return false
