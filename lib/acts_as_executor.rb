@@ -1,3 +1,6 @@
+require "active_model"
+require "active_record"
+
 require "acts_as_executor/common/future_task"
 require "acts_as_executor/common/units"
 
