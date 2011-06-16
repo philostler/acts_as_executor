@@ -10,6 +10,13 @@ module ActsAsExecutor
         def executor= executor
           @@executors[id] = executor
         end
+
+        def log
+          logger
+        end
+        def logger
+          self.class.logger
+        end
       end
     end
   end
