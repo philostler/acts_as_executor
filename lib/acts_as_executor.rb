@@ -12,6 +12,7 @@ require "acts_as_executor/executor/model/associations"
 require "acts_as_executor/executor/model/attributes"
 require "acts_as_executor/executor/model/base"
 require "acts_as_executor/executor/model/helpers"
+require "acts_as_executor/executor/model/logger"
 require "acts_as_executor/executor/model/validations"
 
 require "acts_as_executor/task/schedules"
@@ -29,20 +30,6 @@ ActiveRecord::Base.send :extend, ActsAsExecutor::Executor::Model::Base
 ActiveRecord::Base.send :extend, ActsAsExecutor::Task::Model::Base
 
 module ActsAsExecutor
-  def self.log
-    logger
-  end
-  def self.logger
-    @@logger ||= Rails.logger
-  end
-  def self.logger= logger
-    @@logger = logger
-  end
-
-  def self.configure
-    yield self
-  end
-
   def self.rails_startup?
     File.basename($0) == "rails"
   end
