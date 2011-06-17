@@ -7,7 +7,7 @@ module ActsAsExecutor
           send :include, ActsAsExecutor::Executor::Model::Associations
           send :include, ActsAsExecutor::Executor::Model::Attributes
           send :include, ActsAsExecutor::Executor::Model::Helpers
-          send :extend, ActsAsExecutor::Executor::Model::Logger
+          send :extend, ActsAsExecutor::Executor::Model::Logging
           send :include, ActsAsExecutor::Executor::Model::Validations
 
           hash = arguments.last.is_a?(Hash) ? arguments.pop : {}

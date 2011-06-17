@@ -1,7 +1,7 @@
 module ActsAsExecutor
   module Executor
     module Model
-      module Logger
+      module Logging
         def logger
           @@logger ||= Rails.logger
         end

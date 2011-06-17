@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe ActsAsExecutor::Executor::Model::Logger do
+describe ActsAsExecutor::Executor::Model::Logging do
   describe "#logger" do
     context "default logger" do
       it "should return Rails.logger" do

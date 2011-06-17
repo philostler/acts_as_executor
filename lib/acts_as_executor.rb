@@ -12,7 +12,7 @@ require "acts_as_executor/executor/model/associations"
 require "acts_as_executor/executor/model/attributes"
 require "acts_as_executor/executor/model/base"
 require "acts_as_executor/executor/model/helpers"
-require "acts_as_executor/executor/model/logger"
+require "acts_as_executor/executor/model/logging"
 require "acts_as_executor/executor/model/validations"
 
 require "acts_as_executor/task/schedules"
