@@ -1,4 +1,4 @@
-def double_executor_activerecord_model class_name
+def double_executor_model class_name
   ActiveRecord::Schema.define do
     self.verbose = false
 
