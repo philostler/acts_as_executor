@@ -1,3 +1,6 @@
+double_executor_model("Executor").acts_as_executor
+double_executor_model("ExecutorWithoutExtension")
+
 class Rails
   def self.logger
     @@logger
@@ -5,11 +8,4 @@ class Rails
   def self.logger= logger
     @@logger = logger
   end
-end
-
-class Executor < ActiveRecord::Base
-  acts_as_executor
-end
-
-class ExecutorWithoutExtension < ActiveRecord::Base
 end
