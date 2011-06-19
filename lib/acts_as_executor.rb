@@ -30,7 +30,7 @@ ActiveRecord::Base.send :extend, ActsAsExecutor::Executor::Model::Base
 ActiveRecord::Base.send :extend, ActsAsExecutor::Task::Model::Base
 
 module ActsAsExecutor
-  def self.rails_startup?
+  def self.rails_booted?
     File.basename($0) == "rails"
   end
 end

@@ -5,7 +5,7 @@ describe ActsAsExecutor do
     specify { ActsAsExecutor::VERSION.should eq "1.0.0.rc1" }
   end
 
-  describe "#rails_startup?" do
-    specify { ActsAsExecutor.rails_startup?.should be_false }
+  describe "#rails_booted?" do
+    specify { ActsAsExecutor.rails_booted?.should be_false }
   end
 end
