@@ -6,7 +6,7 @@ double_executor_task_model("ExecutorTaskWithoutExtension")
 
 class Rails
   def self.logger
-    @@logger
+    @@logger ||= nil
   end
   def self.logger= logger
     @@logger = logger
