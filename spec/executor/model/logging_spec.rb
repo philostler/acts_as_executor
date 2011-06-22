@@ -7,8 +7,8 @@ describe ActsAsExecutor::Executor::Model::Logging do
         double_logger = double_rails_logger
 
         @model = Executor.new
-        @model.log.should eq double_logger
-        @model.logger.should eq double_logger
+        @model.send(:log).should eq double_logger
+        @model.send(:logger).should eq double_logger
       end
     end
     context "custom logger" do
@@ -19,8 +19,8 @@ describe ActsAsExecutor::Executor::Model::Logging do
         ExecutorWithCustomLogger.acts_as_executor :logger => double_logger
 
         @model = ExecutorWithCustomLogger.new
-        @model.log.should eq double_logger
-        @model.logger.should eq double_logger
+        @model.send(:log).should eq double_logger
+        @model.send(:logger).should eq double_logger
       end
     end
     context "nil logger" do
@@ -31,8 +31,8 @@ describe ActsAsExecutor::Executor::Model::Logging do
         ExecutorWithNilLogger.acts_as_executor :logger => nil
 
         @model = ExecutorWithNilLogger.new
-        @model.log.should eq double_logger
-        @model.logger.should eq double_logger
+        @model.send(:log).should eq double_logger
+        @model.send(:logger).should eq double_logger
       end
     end
   end
