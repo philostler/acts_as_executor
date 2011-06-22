@@ -2,6 +2,7 @@ module ActsAsExecutor
   module Executor
     module Model
       module Attributes
+        protected
         @@executors = Hash.new
 
         def executor
