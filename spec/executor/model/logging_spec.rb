@@ -4,8 +4,7 @@ describe ActsAsExecutor::Executor::Model::Logging do
   describe "#logger" do
     context "default logger" do
       it "should return Rails.logger" do
-        double_logger = double "Logger"
-        Rails.logger = double_logger
+        double_logger = double_rails_logger
 
         @model = Executor.new
         @model.log.should eq double_logger
@@ -26,8 +25,7 @@ describe ActsAsExecutor::Executor::Model::Logging do
     end
     context "nil logger" do
       it "should return Rails.logger" do
-        double_logger = double "Logger"
-        Rails.logger = double_logger
+        double_logger = double_rails_logger
 
         double_executor_model "ExecutorWithNilLogger"
         ExecutorWithNilLogger.acts_as_executor :logger => nil
