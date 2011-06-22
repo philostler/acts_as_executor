@@ -3,7 +3,7 @@ module ActsAsExecutor
     module Model
       module Logging
         def logger
-          @@logger ||= Rails.logger
+          @@logger ? @@logger : Rails.logger
         end
         def logger= logger
           @@logger = logger
