@@ -29,3 +29,19 @@ def double_executor_task_model class_name
 
   Object.const_set class_name, Class.new(ActiveRecord::Base)
 end
+
+def double_rails_logger
+  double_logger = double "Logger"
+  double_logger.stub :debug
+  double_logger.stub :info
+  double_logger.stub :warn
+  double_logger.stub :error
+  double_logger.stub :fatal
+
+  Rails.logger = double_logger
+  double_logger
+end
+
+def should_receive_rails_booted? booted
+  ActsAsExecutor.should_receive(:rails_booted?).and_return(booted)
+end
