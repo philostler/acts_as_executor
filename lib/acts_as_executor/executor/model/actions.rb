@@ -10,23 +10,23 @@ module ActsAsExecutor
         end
 
         def startup
-          ActsAsExecutor.log.debug "Executor \"" + name + "\" starting up..."
+          self.log.debug "Executor \"" + name + "\" starting up..."
           self.executor = ActsAsExecutor::Executor::Factory.create kind, size
-          ActsAsExecutor.log.info "Executor \"" + name + "\" has completed startup"
+          self.log.info "Executor \"" + name + "\" has completed startup"
 
           tasks.all
         end
 
         def shutdown
-          ActsAsExecutor.log.debug "Executor \"" + name + "\" shutting down..."
+          self.log.debug "Executor \"" + name + "\" shutting down..."
           begin
             self.executor.shutdown
           rescue Java::java.lang.RuntimePermission
-            ActsAsExecutor.log.error "Executor \"" + name + "\" has experienced a RuntimePermission error"
+            self.log.error "Executor \"" + name + "\" has experienced a RuntimePermission error"
           rescue Java::java.lang.SecurityException
-            ActsAsExecutor.log.error "Executor \"" + name + "\" has experienced a SecurityException error"
+            self.log.error "Executor \"" + name + "\" has experienced a SecurityException error"
           end
-          ActsAsExecutor.log.info "Executor \"" + name + "\" has completed shutdown"
+          self.log.info "Executor \"" + name + "\" has completed shutdown"
         end
 
         def execute clazz, schedule, start, every, units
@@ -52,11 +52,11 @@ module ActsAsExecutor
             end
             return future
           rescue Java::java.lang.NullPointerException => e
-            ActsAsExecutor.log.error "Executor \"" + name + "\" attaching task threw a NullPointerException. " + e.to_s
+            self.log.error "Executor \"" + name + "\" attaching task threw a NullPointerException. " + e.to_s
           rescue Java::java.lang.IllegalArgumentException => e
-            ActsAsExecutor.log.error "Executor \"" + name + "\" attaching task threw a IllegalArgumentException. " + e.to_s
+            self.log.error "Executor \"" + name + "\" attaching task threw a IllegalArgumentException. " + e.to_s
           rescue Java::java.util.concurrent.RejectedExecutionException => e
-            ActsAsExecutor.log.error "Executor \"" + name + "\" attaching task threw a RejectedExecutionException. " + e.to_s
+            self.log.error "Executor \"" + name + "\" attaching task threw a RejectedExecutionException. " + e.to_s
           end
         end
       end
