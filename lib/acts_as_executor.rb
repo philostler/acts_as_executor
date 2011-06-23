@@ -15,6 +15,7 @@ require "acts_as_executor/executor/model/helpers"
 require "acts_as_executor/executor/model/logging"
 require "acts_as_executor/executor/model/validations"
 
+require "acts_as_executor/task/clazz"
 require "acts_as_executor/task/schedules"
 
 require "acts_as_executor/task/model/actions"
