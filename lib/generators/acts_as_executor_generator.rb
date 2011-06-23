@@ -1,4 +1,4 @@
-class ExecutorGenerator < Rails::Generators::NamedBase
+class ActsAsExecutorGenerator < Rails::Generators::NamedBase
   include Rails::Generators::Migration
 
   source_root File.expand_path("../templates", __FILE__)
