@@ -25,7 +25,7 @@ require "acts_as_executor/task/model/base"
 require "acts_as_executor/task/model/helpers"
 require "acts_as_executor/task/model/validations"
 
-require "acts_as_executor/validators/class_exists_validator"
+require "acts_as_executor/validators/class_exists_with_required_module_validator"
 
 ActiveRecord::Base.send :extend, ActsAsExecutor::Executor::Model::Base
 ActiveRecord::Base.send :extend, ActsAsExecutor::Task::Model::Base
