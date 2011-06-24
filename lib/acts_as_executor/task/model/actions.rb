@@ -11,7 +11,7 @@ module ActsAsExecutor
 
         def execute
           begin
-            instance = clazz.constantize.new
+            instance = Object.const_get(clazz).new
           rescue NameError
             ActsAsExecutor.log.error "Task creating task could not create class"
           end
