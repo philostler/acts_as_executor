@@ -42,12 +42,7 @@ module ActsAsExecutor
                   future = self.executor.schedule_at_fixed_rate clazz, start, every, units
               end
             else
-              case clazz
-                when Java::java.util.concurrent.Callable
-                  future = ActsAsExecutor::Common::FutureTask.new clazz
-                when Java::java.lang.Runnable
-                  future = ActsAsExecutor::Common::FutureTask.new clazz, nil
-              end
+              future = ActsAsExecutor::Common::FutureTask.new clazz, nil
               self.executor.execute future
             end
             return future
