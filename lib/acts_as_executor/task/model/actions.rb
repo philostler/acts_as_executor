@@ -16,12 +16,7 @@ module ActsAsExecutor
             ActsAsExecutor.log.error "Task creating task could not create class"
           end
 
-          if arguments
-            arguments.each_pair do |k, v|
-              attribute = "#{k}="
-              instance.send attribute, v if instance.respond_to? attribute
-            end
-          end
+          instance.arguments = arguments
 
           self.future = executor.execute instance, schedule, start, every, units
           if !executor.schedulable?
