@@ -3,7 +3,7 @@ require "spec_helper"
 describe ActsAsExecutor::Task::Model::Base do
   describe ActiveRecord::Base do
     it "should extend ActsAsExecutor::Task::Model::Base" do
-      ActiveRecord::Base.kind_of?(ActsAsExecutor::Task::Model::Base).should be_true
+      ActiveRecord::Base.should be_kind_of(ActsAsExecutor::Task::Model::Base)
     end
   end
 
