@@ -1,3 +1,11 @@
+def define_clazz_class class_name
+  unless Object.const_defined? class_name
+    constant = Object.const_set class_name, Class.new
+    constant.send :include, ActsAsExecutor::Task::Clazz
+  end
+  Object.const_get class_name
+end
+
 def define_executor_model_class class_name
   unless Object.const_defined? class_name
     ActiveRecord::Schema.define do
@@ -12,6 +20,7 @@ def define_executor_model_class class_name
 
     Object.const_set class_name, Class.new(ActiveRecord::Base)
   end
+  Object.const_get class_name
 end
 
 def define_executor_task_model_class class_name
@@ -32,4 +41,5 @@ def define_executor_task_model_class class_name
 
     Object.const_set class_name, Class.new(ActiveRecord::Base)
   end
+  Object.const_get class_name
 end
