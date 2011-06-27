@@ -2,19 +2,19 @@ require "spec_helper"
 
 describe ActsAsExecutor::Executor::Kinds do
   describe "CACHED" do
-    specify { ActsAsExecutor::Executor::Kinds::CACHED.should eq "cached" }
+    specify { ActsAsExecutor::Executor::Kinds::CACHED.should == "cached" }
   end
   describe "FIXED" do
-    specify { ActsAsExecutor::Executor::Kinds::FIXED.should eq "fixed" }
+    specify { ActsAsExecutor::Executor::Kinds::FIXED.should == "fixed" }
   end
   describe "SINGLE" do
-    specify { ActsAsExecutor::Executor::Kinds::SINGLE.should eq "single" }
+    specify { ActsAsExecutor::Executor::Kinds::SINGLE.should == "single" }
   end
   describe "SCHEDULED" do
-    specify { ActsAsExecutor::Executor::Kinds::SCHEDULED.should eq "scheduled" }
+    specify { ActsAsExecutor::Executor::Kinds::SCHEDULED.should == "scheduled" }
   end
   describe "SINGLE_SCHEDULED" do
-    specify { ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED.should eq "single_scheduled" }
+    specify { ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED.should == "single_scheduled" }
   end
 
   describe "ALL" do
