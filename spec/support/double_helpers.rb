@@ -1,7 +1,6 @@
-#def double_clazz
-#  clazz = Object.new
-#  clazz.class_eval { send :include, ActsAsExecutor::Task::Clazz }
-#end
+def double_clazz
+  define_clazz_class("Clazz").new
+end
 
 def double_rails_logger_and_assign
   double_logger = double "Logger"
