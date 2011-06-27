@@ -3,14 +3,14 @@ require "spec_helper"
 describe ActsAsExecutor::Executor::Model::Base do
   describe ActiveRecord::Base do
     it "should extend ActsAsExecutor::Executor::Model::Base" do
-      ActiveRecord::Base.kind_of?(ActsAsExecutor::Executor::Model::Base).should be_true
+      ActiveRecord::Base.should be_kind_of(ActsAsExecutor::Executor::Model::Base)
     end
   end
 
   describe "#acts_as_executor" do
     context "before invocation" do
       it "should not extend ActsAsExecutor::Executor::Model::Logging" do
-        ExecutorWithoutExtension.kind_of?(ActsAsExecutor::Executor::Model::Logging).should be_false
+        ExecutorWithoutExtension.should_not be_kind_of(ActsAsExecutor::Executor::Model::Logging)
       end
 
       it "should not include ActsAsExecutor::Executor::Model::Actions" do
@@ -32,7 +32,7 @@ describe ActsAsExecutor::Executor::Model::Base do
 
     context "after invocation" do
       it "should extend ActsAsExecutor::Executor::Model::Logging" do
-        Executor.kind_of?(ActsAsExecutor::Executor::Model::Logging).should be_true
+        Executor.should be_kind_of(ActsAsExecutor::Executor::Model::Logging)
       end
 
       it "should include ActsAsExecutor::Executor::Model::Actions" do
