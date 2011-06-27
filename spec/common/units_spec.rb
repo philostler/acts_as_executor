@@ -2,25 +2,25 @@ require "spec_helper"
 
 describe ActsAsExecutor::Common::Units do
   describe "NANOSECONDS" do
-    specify { ActsAsExecutor::Common::Units::NANOSECONDS.should eq "nanoseconds" }
+    specify { ActsAsExecutor::Common::Units::NANOSECONDS.should == "nanoseconds" }
   end
   describe "MICROSECONDS" do
-    specify { ActsAsExecutor::Common::Units::MICROSECONDS.should eq "microseconds" }
+    specify { ActsAsExecutor::Common::Units::MICROSECONDS.should == "microseconds" }
   end
   describe "MILLISECONDS" do
-    specify { ActsAsExecutor::Common::Units::MILLISECONDS.should eq "milliseconds" }
+    specify { ActsAsExecutor::Common::Units::MILLISECONDS.should == "milliseconds" }
   end
   describe "SECONDS" do
-    specify { ActsAsExecutor::Common::Units::SECONDS.should eq "seconds" }
+    specify { ActsAsExecutor::Common::Units::SECONDS.should == "seconds" }
   end
   describe "MINUTES" do
-    specify { ActsAsExecutor::Common::Units::MINUTES.should eq "minutes" }
+    specify { ActsAsExecutor::Common::Units::MINUTES.should == "minutes" }
   end
   describe "HOURS" do
-    specify { ActsAsExecutor::Common::Units::HOURS.should eq "hours" }
+    specify { ActsAsExecutor::Common::Units::HOURS.should == "hours" }
   end
   describe "DAYS" do
-    specify { ActsAsExecutor::Common::Units::DAYS.should eq "days" }
+    specify { ActsAsExecutor::Common::Units::DAYS.should == "days" }
   end
 
   describe "ALL" do
