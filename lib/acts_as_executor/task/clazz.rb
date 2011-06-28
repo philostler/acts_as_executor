@@ -9,7 +9,7 @@ module ActsAsExecutor
       def run
         if @arguments
           @arguments.each_pair do |k, v|
-            class_eval { attr_accessor k }
+            class_eval { attr_accessor k } unless respond_to? k
             send "#{k}=", v
           end
         end
