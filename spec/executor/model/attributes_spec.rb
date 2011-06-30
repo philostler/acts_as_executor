@@ -19,7 +19,13 @@ describe ActsAsExecutor::Executor::Model::Attributes do
       expect { @model.executor = nil }.to raise_error NoMethodError
     end
     it "should be accessible via send method" do
-      expect { @model.send :executor=, nil }.to_not raise_error
+      expect {
+        @model.id = 1
+        @model.send :executor=, nil
+      }.to_not raise_error
+    end
+    it "should raise an error when id is nil" do
+      expect { @model.send :executor=, nil }.to raise_error ArgumentError, "cannot reference executor against nil id"
     end
   end
 
