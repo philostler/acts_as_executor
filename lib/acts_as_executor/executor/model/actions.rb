@@ -3,18 +3,10 @@ module ActsAsExecutor
     module Model
       module Actions
         def self.included base
-          base.after_find :startup, :if => :startup_now?
-          base.after_save :startup, :if => :startup_now?
+          base.after_find :startup
+          base.after_save :startup
 
           base.after_destroy :shutdown, :if => :shutdown_now?
-        end
-
-        def startup
-          self.log.debug "Executor \"" + name + "\" starting up..."
-          self.executor = ActsAsExecutor::Executor::Factory.create kind, size
-          self.log.info "Executor \"" + name + "\" has completed startup"
-
-          tasks.all
         end
 
         def shutdown
@@ -52,6 +44,19 @@ module ActsAsExecutor
             self.log.error "Executor \"" + name + "\" attaching task threw a IllegalArgumentException. " + e.to_s
           rescue Java::java.util.concurrent.RejectedExecutionException => e
             self.log.error "Executor \"" + name + "\" attaching task threw a RejectedExecutionException. " + e.to_s
+          end
+        end
+
+        private
+        def startup
+          if startup_now?
+            self.log.debug "\"" + name + "\" executor startup triggered"
+            self.executor = ActsAsExecutor::Executor::Factory.create kind, size
+            self.log.info "\"" + name + "\" executor started"
+
+            tasks.all
+          else
+            self.log.warn "\"" + name + "\" executor startup triggered but has already been started"
           end
         end
       end
