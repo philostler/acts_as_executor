@@ -9,6 +9,7 @@ module ActsAsExecutor
           @@executors[id]
         end
         def executor= executor
+          raise ArgumentError, "cannot reference executor against nil id" unless id
           @@executors[id] = executor
         end
 
