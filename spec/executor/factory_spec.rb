@@ -29,10 +29,10 @@ describe ActsAsExecutor::Executor::Factory do
         end
         context "when invalid" do
           it "should throw TypeError for size nil" do
-            expect { ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::FIXED) }.to raise_error TypeError
+            expect { ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::FIXED) }.to raise_error TypeError, "size cannot be nil"
           end
           it "should throw ArgumentError for size 0" do
-            expect { ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::FIXED, 0) }.to raise_error ArgumentError
+            expect { ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::FIXED, 0) }.to raise_error ArgumentError, "size must be larger than 0"
           end
         end
       end
@@ -63,10 +63,10 @@ describe ActsAsExecutor::Executor::Factory do
         end
         context "when invalid" do
           it "should throw TypeError for size nil" do
-            expect { ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::SCHEDULED) }.to raise_error TypeError
+            expect { ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::SCHEDULED) }.to raise_error TypeError, "size cannot be nil"
           end
           it "should throw ArgumentError for size 0" do
-            expect { ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::SCHEDULED, 0) }.to raise_error ArgumentError
+            expect { ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::SCHEDULED, 0) }.to raise_error ArgumentError, "size must be larger than 0"
           end
         end
       end
