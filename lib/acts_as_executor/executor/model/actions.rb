@@ -3,10 +3,10 @@ module ActsAsExecutor
     module Model
       module Actions
         def self.included base
-          base.after_find :startup
-          base.after_save :startup
+          base.after_find :startup, :if => :can_startup?
+          base.after_save :startup, :if => :can_startup?
 
-          base.after_destroy :shutdown, :if => :shutdown_now?
+          base.after_destroy :shutdown, :if => :can_shutdown?
         end
 
         def shutdown
@@ -49,15 +49,11 @@ module ActsAsExecutor
 
         private
         def startup
-          if startup_now?
-            self.log.debug "\"" + name + "\" executor startup triggered"
-            self.executor = ActsAsExecutor::Executor::Factory.create kind, size
-            self.log.info "\"" + name + "\" executor started"
+          self.log.debug "\"" + name + "\" executor startup triggered"
+          self.executor = ActsAsExecutor::Executor::Factory.create kind, size
+          self.log.info "\"" + name + "\" executor started"
 
-            tasks.all
-          else
-            self.log.warn "\"" + name + "\" executor startup triggered but has already been started"
-          end
+          tasks.all
         end
       end
     end
