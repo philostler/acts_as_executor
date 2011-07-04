@@ -2,14 +2,14 @@ module ActsAsExecutor
   module Executor
     module Model
       module Helpers
-        def startup_now?
+        def can_startup?
           if self.executor == nil && ActsAsExecutor.rails_booted?
             return true
           end
           return false
         end
 
-        def shutdown_now?
+        def can_shutdown?
           if self.executor != nil && ActsAsExecutor.rails_booted?
             return true
           end
