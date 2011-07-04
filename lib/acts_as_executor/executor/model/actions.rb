@@ -9,18 +9,6 @@ module ActsAsExecutor
           base.after_destroy :shutdown, :if => :can_shutdown?
         end
 
-        def shutdown
-          self.log.debug "Executor \"" + name + "\" shutting down..."
-          begin
-            self.executor.shutdown
-          rescue Java::java.lang.RuntimePermission
-            self.log.error "Executor \"" + name + "\" has experienced a RuntimePermission error"
-          rescue Java::java.lang.SecurityException
-            self.log.error "Executor \"" + name + "\" has experienced a SecurityException error"
-          end
-          self.log.info "Executor \"" + name + "\" has completed shutdown"
-        end
-
         def execute clazz, schedule, start, every, units
           begin
             if schedulable?
@@ -54,6 +42,17 @@ module ActsAsExecutor
           self.log.info "\"" + name + "\" executor started"
 
           tasks.all
+        end
+        def shutdown
+          self.log.debug "Executor \"" + name + "\" shutting down..."
+          begin
+            self.executor.shutdown
+          rescue Java::java.lang.RuntimePermission
+            self.log.error "Executor \"" + name + "\" has experienced a RuntimePermission error"
+          rescue Java::java.lang.SecurityException
+            self.log.error "Executor \"" + name + "\" has experienced a SecurityException error"
+          end
+          self.log.info "Executor \"" + name + "\" has completed shutdown"
         end
       end
     end
