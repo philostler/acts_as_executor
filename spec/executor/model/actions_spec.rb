@@ -2,7 +2,11 @@ require "spec_helper"
 
 describe ActsAsExecutor::Executor::Model::Actions do
   before :each do
-    @model = Executor.new :name => "Executor", :kind => ActsAsExecutor::Executor::Kinds::SINGLE
+    @model = Executor.new :name => example.full_description, :kind => ActsAsExecutor::Executor::Kinds::SINGLE
+  end
+
+  describe "#execute" do
+    #
   end
 
   describe "#startup" do
@@ -20,14 +24,15 @@ describe ActsAsExecutor::Executor::Model::Actions do
         should_receive_rails_booted? true
 
         @model.send(:executor).should be_nil
-        @model.send(:log).should_receive(:debug).with("\"Executor\" executor startup triggered")
-        @model.send(:log).should_receive(:info).with("\"Executor\" executor started")
+        @model.send(:log).should_receive(:debug).with("\"" + example.full_description + "\" executor startup triggered")
+        @model.send(:log).should_receive(:info).with("\"" + example.full_description + "\" executor started")
 
         @model.save
 
         @model.send(:executor).should_not be_nil
       end
       it "should not create executor when an executor already exists" do
+        double_rails_logger_and_assign
         should_receive_rails_booted? true
 
         @model.save
@@ -49,6 +54,20 @@ describe ActsAsExecutor::Executor::Model::Actions do
 
         @model.send(:executor).should be_nil
       end
+    end
+  end
+
+  describe "#shutdown" do
+    it "should not be accessible publicly" do
+      expect { @model.shutdown }.to raise_error NoMethodError
+    end
+    it "should be accessible via send method" do
+      double_rails_logger_and_assign
+      should_receive_rails_booted? true
+
+      @model.save
+
+      expect { @model.send :shutdown }.to_not raise_error NoMethodError
     end
   end
 end
