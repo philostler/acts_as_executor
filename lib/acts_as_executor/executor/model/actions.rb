@@ -47,9 +47,6 @@ module ActsAsExecutor
           self.log.debug "\"" + name + "\" executor shutdown triggered"
           begin
             self.executor.shutdown
-          rescue Java::java.lang.RuntimePermission
-            self.log.warn "\"" + name + "\" executor experienced a runtime permission error during shutdown"
-            shutdown_forced
           rescue Java::java.lang.SecurityException
             self.log.warn "\"" + name + "\" executor experienced a security exception error during shutdown"
             shutdown_forced
@@ -63,9 +60,6 @@ module ActsAsExecutor
           self.log.debug "\"" + name + "\" executor shutdown (forced) triggered"
           begin
             self.executor.shutdown_now
-          rescue Java::java.lang.RuntimePermission
-            self.log.error "\"" + name + "\" executor experienced a runtime permission error during shutdown (forced)"
-            self.log.fatal "\"" + name + "\" executor shutdown (forced) failed"
           rescue Java::java.lang.SecurityException
             self.log.error "\"" + name + "\" executor experienced a security exception error during shutdown (forced)"
             self.log.fatal "\"" + name + "\" executor shutdown (forced) failed"

@@ -5,9 +5,7 @@ describe ActsAsExecutor::Executor::Model::Actions do
     @model = Executor.new :name => example.full_description, :kind => ActsAsExecutor::Executor::Kinds::SINGLE
   end
 
-  describe "#execute" do
-    #
-  end
+  describe "#execute"
 
   describe "#startup" do
     it "should not be accessible publicly" do
@@ -86,10 +84,6 @@ describe ActsAsExecutor::Executor::Model::Actions do
       end
     end
 
-    context "when runtime permission error is thrown during shutdown" do
-      it "should force shutdown executor"
-    end
-
     context "when security exception error is thrown during shutdown" do
       it "should force shutdown executor" do
         double_rails_logger_and_assign
@@ -109,10 +103,6 @@ describe ActsAsExecutor::Executor::Model::Actions do
 
         @model.send(:executor).should be_nil
       end
-    end
-
-    context "when runtime permission error is thrown during forced shutdown" do
-      it "should log error and set executor nil"
     end
 
     context "when security exception error is thrown during forced shutdown" do
