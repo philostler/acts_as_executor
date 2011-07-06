@@ -18,6 +18,6 @@ Gem::Specification.new do |s|
   s.add_dependency "activemodel", ">= 3.0"
   s.add_dependency "activerecord", ">= 3.0"
 
-  s.add_development_dependency "activerecord-jdbcsqlite3-adapter", "~> 1.1.1"
+  s.add_development_dependency "activerecord-jdbcsqlite3-adapter", ">= 1.1.2"
   s.add_development_dependency "rspec", "~> 2.6"
 end
