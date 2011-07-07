@@ -40,7 +40,6 @@ describe ActsAsExecutor::Executor::Model::Actions do
 
         @model.send(:executor).should == executor
       end
-      it "should queue all associated tasks"
     end
     context "when invalid" do
       it "should not create executor" do
