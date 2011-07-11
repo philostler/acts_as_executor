@@ -17,7 +17,7 @@ module ActsAsExecutor
             all
             at_exit do
               all.each do |e|
-                e.shutdown
+                e.send :shutdown
               end
             end
           end
