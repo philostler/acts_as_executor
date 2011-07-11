@@ -17,11 +17,16 @@ module ActsAsExecutor
           end
 
           instance.arguments = arguments
+          instance.uncaught_exception_handler = method :uncaught_exception_handler
 
           self.future = executor.execute instance, schedule, start, every, units
           if !executor.schedulable?
             self.future.task = self
           end
+        end
+
+        def uncaught_exception_handler exception
+          executor.send(:log).error "\"" + executor.name + "\" executor executing task \"" + clazz + "\" experienced an uncaught exception. " + exception
         end
       end
     end
