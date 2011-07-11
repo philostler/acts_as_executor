@@ -3,7 +3,7 @@ module ActsAsExecutor
     module Clazz
       include Java::java.lang.Runnable
 
-      attr_writer :arguments
+      attr_writer :arguments, :uncaught_exception_handler
 
       private
       def run
@@ -14,7 +14,11 @@ module ActsAsExecutor
           end
         end
 
-        execute
+        begin
+          execute
+        rescue Exception => exception
+          @uncaught_exception_handler.call exception
+        end
       end
     end
   end
