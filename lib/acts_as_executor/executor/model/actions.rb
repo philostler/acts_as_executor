@@ -9,6 +9,7 @@ module ActsAsExecutor
           base.after_destroy :shutdown, :if => :can_shutdown?
         end
 
+        private
         def execute clazz, schedule, start, every, units
           begin
             if schedulable?
@@ -25,7 +26,7 @@ module ActsAsExecutor
               future = ActsAsExecutor::Common::FutureTask.new clazz, nil
               self.executor.execute future
             end
-            return future
+            future
           rescue Java::java.lang.NullPointerException => e
             self.log.error "Executor \"" + name + "\" attaching task threw a NullPointerException. " + e.to_s
           rescue Java::java.lang.IllegalArgumentException => e
@@ -34,8 +35,6 @@ module ActsAsExecutor
             self.log.error "Executor \"" + name + "\" attaching task threw a RejectedExecutionException. " + e.to_s
           end
         end
-
-        private
         def startup
           self.log.debug "\"" + name + "\" executor startup triggered"
           self.executor = ActsAsExecutor::Executor::Factory.create kind, size
@@ -65,6 +64,8 @@ module ActsAsExecutor
             self.log.fatal "\"" + name + "\" executor shutdown (forced) failed"
           else
             self.log.info "\"" + name + "\" executor shutdown (forced)"
+          ensure
+            self.executor = nil
           end
         end
       end
