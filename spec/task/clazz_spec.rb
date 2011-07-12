@@ -69,6 +69,18 @@ describe ActsAsExecutor::Task::Clazz do
         @clazz.should respond_to :attribute_four
         @clazz.attribute_four.should == "attribute_four"
       end
+      it "should catch uncaught exceptions and invoke uncaught exception handler" do
+        double_uncaught_exception_handler = double "UncaughtExceptionHandler"
+        double_uncaught_exception_handler.stub :uncaught_exception_handler
+
+        @clazz.uncaught_exception_handler = double_uncaught_exception_handler.method :uncaught_exception_handler
+
+        exception = Exception.new
+        @clazz.should_receive(:execute).and_raise exception
+        double_uncaught_exception_handler.should_receive(:uncaught_exception_handler).with(exception)
+
+        @clazz.send :run
+      end
     end
   end
 end
