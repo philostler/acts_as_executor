@@ -5,7 +5,19 @@ describe ActsAsExecutor::Executor::Model::Actions do
     @model = Executor.new :name => example.full_description, :kind => ActsAsExecutor::Executor::Kinds::SINGLE
   end
 
-  describe "#execute"
+  describe "#execute" do
+    it "should not be accessible publicly" do
+      expect { @model.execute nil, nil, nil, nil, nil }.to raise_error NoMethodError
+    end
+    it "should be accessible via send method" do
+      double_rails_logger_and_assign
+      expect { @model.send :execute, nil, nil, nil, nil, nil }.to_not raise_error NoMethodError
+    end
+
+    it "should" do
+      #
+    end
+  end
 
   describe "#startup" do
     it "should not be accessible publicly" do
@@ -75,6 +87,7 @@ describe ActsAsExecutor::Executor::Model::Actions do
         @model.save
 
         @model.send(:log).should_receive(:debug).with("\"" + example.full_description + "\" executor shutdown triggered")
+        @model.send(:executor).should_receive :shutdown
         @model.send(:log).should_receive(:info).with("\"" + example.full_description + "\" executor shutdown")
 
         @model.send :shutdown
@@ -90,37 +103,61 @@ describe ActsAsExecutor::Executor::Model::Actions do
 
         @model.save
 
-        @model.send(:executor).should_not be_nil
         @model.send(:log).should_receive(:debug).with("\"" + example.full_description + "\" executor shutdown triggered")
         @model.send(:executor).should_receive(:shutdown).and_raise Java::java.lang.SecurityException.new
         @model.send(:log).should_receive(:warn).with("\"" + example.full_description + "\" executor experienced a security exception error during shutdown")
-        @model.send(:log).should_receive(:debug).with("\"" + example.full_description + "\" executor shutdown (forced) triggered")
-        @model.send(:executor).should_receive :shutdown_now
-        @model.send(:log).should_receive(:info).with("\"" + example.full_description + "\" executor shutdown (forced)")
+        @model.should_receive :shutdown_forced
 
         @model.send :shutdown
 
         @model.send(:executor).should be_nil
       end
     end
+  end
 
-    context "when security exception error is thrown during forced shutdown" do
-      it "should log error and set executor nil" do
+  describe "#shutdown_forced" do
+    it "should not be accessible publicly" do
+      expect { @model.shutdown_forced }.to raise_error NoMethodError
+    end
+    it "should be accessible via send method" do
+      double_rails_logger_and_assign
+      should_receive_rails_booted? true
+
+      @model.save
+
+      expect { @model.send :shutdown_forced }.to_not raise_error NoMethodError
+    end
+
+    context "when no error is thrown during forced shutdown" do
+      it "should force shutdown executor" do
         double_rails_logger_and_assign
         should_receive_rails_booted? true
 
         @model.save
 
-        @model.send(:executor).should_not be_nil
-        @model.send(:log).should_receive(:debug).with("\"" + example.full_description + "\" executor shutdown triggered")
-        @model.send(:executor).should_receive(:shutdown).and_raise Java::java.lang.SecurityException.new
-        @model.send(:log).should_receive(:warn).with("\"" + example.full_description + "\" executor experienced a security exception error during shutdown")
+        @model.send(:log).should_receive(:debug).with("\"" + example.full_description + "\" executor shutdown (forced) triggered")
+        @model.send(:executor).should_receive :shutdown_now
+        @model.send(:log).should_receive(:info).with("\"" + example.full_description + "\" executor shutdown (forced)")
+
+        @model.send :shutdown_forced
+
+        @model.send(:executor).should be_nil
+      end
+    end
+
+    context "when security exception error is thrown during forced shutdown" do
+      it "should log error" do
+        double_rails_logger_and_assign
+        should_receive_rails_booted? true
+
+        @model.save
+
         @model.send(:log).should_receive(:debug).with("\"" + example.full_description + "\" executor shutdown (forced) triggered")
         @model.send(:executor).should_receive(:shutdown_now).and_raise Java::java.lang.SecurityException.new
         @model.send(:log).should_receive(:error).with("\"" + example.full_description + "\" executor experienced a security exception error during shutdown (forced)")
         @model.send(:log).should_receive(:fatal).with("\"" + example.full_description + "\" executor shutdown (forced) failed")
 
-        @model.send :shutdown
+        @model.send :shutdown_forced
 
         @model.send(:executor).should be_nil
       end
