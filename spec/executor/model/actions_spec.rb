@@ -28,7 +28,7 @@ describe ActsAsExecutor::Executor::Model::Actions do
         instance = double_clazz
         instance.arguments = { :attribute_one => "attribute_one", :attribute_two => "attribute_two" }
         @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution"
-        @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\"  for execution (single)"
+        @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution (single)"
 
         future = @model.send :execute, instance, nil, nil, nil, nil
         future.get
