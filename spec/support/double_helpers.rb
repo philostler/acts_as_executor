@@ -1,5 +1,7 @@
 def double_clazz
-  define_clazz_class("Clazz").new
+  double_clazz = define_clazz_class("Clazz").new
+  double_clazz.stub :execute
+  double_clazz
 end
 
 def double_rails_logger_and_assign
