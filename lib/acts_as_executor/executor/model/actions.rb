@@ -30,7 +30,7 @@ module ActsAsExecutor
             else
               future = ActsAsExecutor::Common::FutureTask.new instance, nil
               self.executor.execute future
-              self.log.debug "\"" + name + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution (single)"
+              self.log.debug "\"" + name + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution"
             end
 
             future
