@@ -19,21 +19,74 @@ describe ActsAsExecutor::Executor::Model::Actions do
     end
 
     context "when valid" do
-      it "should successfully execute a task" do
-        double_rails_logger_and_assign
-        should_receive_rails_booted? true
+      context "non-schedulable executor" do
+        it "should successfully execute a task" do
+          double_rails_logger_and_assign
+          should_receive_rails_booted? true
 
-        @model.save
+          @model.save
 
-        instance = double_clazz
-        instance.arguments = { :attribute_one => "attribute_one", :attribute_two => "attribute_two" }
-        @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution"
-        @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution (single)"
+          instance = double_clazz
+          instance.arguments = { :attribute_one => "attribute_one", :attribute_two => "attribute_two" }
+          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution"
+          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution"
 
-        future = @model.send :execute, instance, nil, nil, nil, nil
-        future.get
+          future = @model.send :execute, instance, nil, nil, nil, nil
+          future.get
 
-        future.is_done.should be_true
+          future.is_done.should be_true
+        end
+      end
+      context "schedulable executor" do
+        it "should successfully execute a one shot task" do
+          double_rails_logger_and_assign
+          should_receive_rails_booted? true
+
+          @model.kind = ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
+          @model.save
+
+          instance = double_clazz
+          instance.arguments = { :attribute_one => "attribute_one", :attribute_two => "attribute_two" }
+          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution"
+          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution (one shot)"
+
+          future = @model.send :execute, instance, ActsAsExecutor::Task::Schedules::ONE_SHOT, 0, nil, ActsAsExecutor::Common::Units::SECONDS
+          future.get
+
+          future.is_done.should be_true
+        end
+        it "should successfully execute a fixed delay task" do
+          double_rails_logger_and_assign
+          should_receive_rails_booted? true
+
+          @model.kind = ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
+          @model.save
+
+          instance = double_clazz
+          instance.arguments = { :attribute_one => "attribute_one", :attribute_two => "attribute_two" }
+          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution"
+          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution (fixed delay)"
+
+          future = @model.send :execute, instance, ActsAsExecutor::Task::Schedules::FIXED_DELAY, 0, 2, ActsAsExecutor::Common::Units::SECONDS
+
+          future.should_not be_nil
+        end
+        it "should successfully execute a fixed rate task" do
+          double_rails_logger_and_assign
+          should_receive_rails_booted? true
+
+          @model.kind = ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
+          @model.save
+
+          instance = double_clazz
+          instance.arguments = { :attribute_one => "attribute_one", :attribute_two => "attribute_two" }
+          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution"
+          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution (fixed rate)"
+
+          future = @model.send :execute, instance, ActsAsExecutor::Task::Schedules::FIXED_RATE, 0, 2, ActsAsExecutor::Common::Units::SECONDS
+
+          future.should_not be_nil
+        end
       end
     end
     context "when invalid" do
