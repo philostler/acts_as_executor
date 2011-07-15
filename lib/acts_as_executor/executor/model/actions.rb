@@ -10,29 +10,34 @@ module ActsAsExecutor
         end
 
         private
-        def execute clazz, schedule, start, every, units
+        def execute instance, schedule, start, every, units
           begin
+            self.log.debug "\"" + name + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution"
+
             if schedulable?
               units = Java::java.util.concurrent.TimeUnit.value_of(units.upcase)
               case schedule
                 when ActsAsExecutor::Task::Schedules::ONE_SHOT
-                  future = self.executor.schedule clazz, start, units
+                  future = self.executor.schedule instance, start, units
+                  self.log.debug "\"" + name + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution (one shot)"
                 when ActsAsExecutor::Task::Schedules::FIXED_DELAY
-                  future = self.executor.schedule_with_fixed_delay clazz, start, every, units
+                  future = self.executor.schedule_with_fixed_delay instance, start, every, units
+                  self.log.debug "\"" + name + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution (fixed delay)"
                 when ActsAsExecutor::Task::Schedules::FIXED_RATE
-                  future = self.executor.schedule_at_fixed_rate clazz, start, every, units
+                  future = self.executor.schedule_at_fixed_rate instance, start, every, units
+                  self.log.debug "\"" + name + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution (fixed rate)"
               end
             else
-              future = ActsAsExecutor::Common::FutureTask.new clazz, nil
+              future = ActsAsExecutor::Common::FutureTask.new instance, nil
               self.executor.execute future
+              self.log.debug "\"" + name + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution (single)"
             end
+
             future
-          rescue Java::java.lang.NullPointerException => e
-            self.log.error "Executor \"" + name + "\" attaching task threw a NullPointerException. " + e.to_s
-          rescue Java::java.lang.IllegalArgumentException => e
-            self.log.error "Executor \"" + name + "\" attaching task threw a IllegalArgumentException. " + e.to_s
-          rescue Java::java.util.concurrent.RejectedExecutionException => e
-            self.log.error "Executor \"" + name + "\" attaching task threw a RejectedExecutionException. " + e.to_s
+          rescue Java::java.util.concurrent.RejectedExecutionException => exception
+            self.log.warn "\"" + name + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" experienced a rejected execution exception error"
+          rescue Exception => exception
+            self.log.error "\"" + name + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" experienced an exception error. " + exception
           end
         end
         def startup
