@@ -10,18 +10,25 @@ describe ActsAsExecutor::Task::Clazz do
       @clazz.should be_kind_of(Java::java.lang.Runnable)
     end
 
+    it "should respond to #arguments" do
+      @clazz.should respond_to :arguments
+    end
+    it "should respond to #arguments=" do
+      @clazz.should respond_to :arguments=
+    end
+
+    it "should not respond to #uncaught_exception_handler" do
+      @clazz.should_not respond_to :uncaught_exception_handler
+    end
+    it "should respond to #uncaught_exception_handler=" do
+      @clazz.should respond_to :uncaught_exception_handler=
+    end
+
     it "should not respond to #run public" do
       @clazz.should_not respond_to :run
     end
     it "should respond to #run private" do
       @clazz.respond_to?(:run, true).should be_true
-    end
-
-    it "should not respond to #arguments" do
-      @clazz.should_not respond_to :arguments
-    end
-    it "should respond to #arguments=" do
-      @clazz.should respond_to :arguments=
     end
 
     context "#run" do

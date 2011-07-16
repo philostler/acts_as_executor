@@ -3,7 +3,8 @@ module ActsAsExecutor
     module Clazz
       include Java::java.lang.Runnable
 
-      attr_writer :arguments, :uncaught_exception_handler
+      attr_accessor :arguments
+      attr_writer :uncaught_exception_handler
 
       private
       def run

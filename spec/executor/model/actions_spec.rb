@@ -15,7 +15,7 @@ describe ActsAsExecutor::Executor::Model::Actions do
     end
     it "should be accessible via send method" do
       double_rails_logger_and_assign
-      expect { @model.send :execute, nil, nil, nil, nil, nil }.to_not raise_error NoMethodError
+      expect { @model.send :execute, double_clazz, nil, nil, nil, nil }.to_not raise_error NoMethodError
     end
 
     context "when valid" do
@@ -28,8 +28,8 @@ describe ActsAsExecutor::Executor::Model::Actions do
 
           instance = double_clazz
           instance.arguments = { :attribute_one => "attribute_one", :attribute_two => "attribute_two" }
-          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution"
-          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution"
+          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution"
+          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution"
 
           future = @model.send :execute, instance, nil, nil, nil, nil
           future.get
@@ -47,8 +47,8 @@ describe ActsAsExecutor::Executor::Model::Actions do
 
           instance = double_clazz
           instance.arguments = { :attribute_one => "attribute_one", :attribute_two => "attribute_two" }
-          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution"
-          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution (one shot)"
+          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution"
+          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution (one shot)"
 
           future = @model.send :execute, instance, ActsAsExecutor::Task::Schedules::ONE_SHOT, 0, nil, ActsAsExecutor::Common::Units::SECONDS
           future.get
@@ -64,8 +64,8 @@ describe ActsAsExecutor::Executor::Model::Actions do
 
           instance = double_clazz
           instance.arguments = { :attribute_one => "attribute_one", :attribute_two => "attribute_two" }
-          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution"
-          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution (fixed delay)"
+          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution"
+          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution (fixed delay)"
 
           future = @model.send :execute, instance, ActsAsExecutor::Task::Schedules::FIXED_DELAY, 0, 2, ActsAsExecutor::Common::Units::SECONDS
 
@@ -80,8 +80,8 @@ describe ActsAsExecutor::Executor::Model::Actions do
 
           instance = double_clazz
           instance.arguments = { :attribute_one => "attribute_one", :attribute_two => "attribute_two" }
-          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution"
-          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.instance_variable_get("@arguments").inspect + "\" for execution (fixed rate)"
+          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution"
+          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution (fixed rate)"
 
           future = @model.send :execute, instance, ActsAsExecutor::Task::Schedules::FIXED_RATE, 0, 2, ActsAsExecutor::Common::Units::SECONDS
 
