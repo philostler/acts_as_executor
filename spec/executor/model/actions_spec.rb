@@ -90,8 +90,35 @@ describe ActsAsExecutor::Executor::Model::Actions do
       end
     end
     context "when invalid" do
-      it "should " do
-        #
+      context "when rejected execution exception error is thrown" do
+        it "should log error" do
+          double_rails_logger_and_assign
+          should_receive_rails_booted? true
+
+          @model.save
+
+          instance = double_clazz
+          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution"
+          @model.send(:executor).should_receive(:execute).and_raise Java::java.util.concurrent.RejectedExecutionException.new
+          @model.send(:log).should_receive(:warn).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" experienced a rejected execution exception error"
+
+          @model.send :execute, instance, nil, nil, nil, nil
+        end
+      end
+      context "when any exception error is thrown" do
+        it "should log error" do
+          double_rails_logger_and_assign
+          should_receive_rails_booted? true
+
+          @model.kind = ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
+          @model.save
+
+          instance = double_clazz
+          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution"
+          @model.send(:log).should_receive(:error).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" experienced an exception error. java.lang.IllegalArgumentException: No enum const class java.util.concurrent.TimeUnit.RANDOM"
+
+          @model.send :execute, instance, nil, nil, nil, "random"
+        end
       end
     end
   end
@@ -156,7 +183,7 @@ describe ActsAsExecutor::Executor::Model::Actions do
       expect { @model.send :shutdown }.to_not raise_error NoMethodError
     end
 
-    context "when no error is thrown during shutdown" do
+    context "when no error is thrown" do
       it "should shutdown executor" do
         double_rails_logger_and_assign
         should_receive_rails_booted? true
@@ -173,7 +200,7 @@ describe ActsAsExecutor::Executor::Model::Actions do
       end
     end
 
-    context "when security exception error is thrown during shutdown" do
+    context "when security exception error is thrown" do
       it "should force shutdown executor" do
         double_rails_logger_and_assign
         should_receive_rails_booted? true
@@ -205,7 +232,7 @@ describe ActsAsExecutor::Executor::Model::Actions do
       expect { @model.send :shutdown_forced }.to_not raise_error NoMethodError
     end
 
-    context "when no error is thrown during forced shutdown" do
+    context "when no error is thrown" do
       it "should force shutdown executor" do
         double_rails_logger_and_assign
         should_receive_rails_booted? true
@@ -222,7 +249,7 @@ describe ActsAsExecutor::Executor::Model::Actions do
       end
     end
 
-    context "when security exception error is thrown during forced shutdown" do
+    context "when security exception error is thrown" do
       it "should log error" do
         double_rails_logger_and_assign
         should_receive_rails_booted? true
