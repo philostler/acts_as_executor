@@ -10,65 +10,66 @@ module ActsAsExecutor
         end
 
         private
-        def execute instance, schedule, start, every, units
+        def startup
+          log.debug log_message "startup triggered"
+          self.executor = ActsAsExecutor::Executor::Factory.create kind, size
+          log.info log_message "started"
+
+          tasks.all
+        end
+
+        def execute clazz, schedule = nil, start = nil, every = nil, units = nil
           begin
-            self.log.debug "\"" + name + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution"
+            humanized_schedule = schedule ? schedule.gsub("_", " ") : "one time"
+            log.debug log_message_with_task "enqueuing", clazz, "for execution (" + humanized_schedule + ")"
 
             if schedulable?
               units = Java::java.util.concurrent.TimeUnit.value_of(units.upcase)
               case schedule
                 when ActsAsExecutor::Task::Schedules::ONE_SHOT
-                  future = self.executor.schedule instance, start, units
-                  self.log.debug "\"" + name + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution (one shot)"
+                  future = executor.schedule clazz, start, units
                 when ActsAsExecutor::Task::Schedules::FIXED_DELAY
-                  future = self.executor.schedule_with_fixed_delay instance, start, every, units
-                  self.log.debug "\"" + name + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution (fixed delay)"
+                  future = executor.schedule_with_fixed_delay clazz, start, every, units
                 when ActsAsExecutor::Task::Schedules::FIXED_RATE
-                  future = self.executor.schedule_at_fixed_rate instance, start, every, units
-                  self.log.debug "\"" + name + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution (fixed rate)"
+                  future = executor.schedule_at_fixed_rate clazz, start, every, units
               end
             else
-              future = ActsAsExecutor::Common::FutureTask.new instance, nil
-              self.executor.execute future
-              self.log.debug "\"" + name + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution"
+              future = ActsAsExecutor::Common::FutureTask.new clazz, nil
+              executor.execute future
             end
 
+            log.info log_message_with_task "enqueued", clazz, "for execution (" + humanized_schedule + ")"
             future
-          rescue Java::java.util.concurrent.RejectedExecutionException => exception
-            self.log.warn "\"" + name + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" experienced a rejected execution exception error"
+          rescue Java::java.util.concurrent.RejectedExecutionException
+            log.warn log_message_with_task "enqueuing", clazz,  "encountered a rejected execution exception"
           rescue Exception => exception
-            self.log.error "\"" + name + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" experienced an exception error. " + exception
+            log.error log_message_with_task "enqueuing", clazz,  "encountered an unexpected exception. " + exception
           end
         end
-        def startup
-          self.log.debug "\"" + name + "\" executor startup triggered"
-          self.executor = ActsAsExecutor::Executor::Factory.create kind, size
-          self.log.info "\"" + name + "\" executor started"
 
-          tasks.all
-        end
         def shutdown
-          self.log.debug "\"" + name + "\" executor shutdown triggered"
+          log.debug log_message "shutdown triggered"
           begin
-            self.executor.shutdown
+            executor.shutdown
           rescue Java::java.lang.SecurityException
-            self.log.warn "\"" + name + "\" executor experienced a security exception error during shutdown"
-            shutdown_forced
+            log.warn log_message "shutdown encountered a security exception"
+            forced_shutdown
           else
-            self.log.info "\"" + name + "\" executor shutdown"
+            log.info log_message "shutdown"
           ensure
             self.executor = nil
           end
         end
-        def shutdown_forced
-          self.log.debug "\"" + name + "\" executor shutdown (forced) triggered"
+
+        def forced_shutdown
+          log.debug log_message "forced shutdown triggered"
           begin
-            self.executor.shutdown_now
+            executor.shutdown_now
           rescue Java::java.lang.SecurityException
-            self.log.error "\"" + name + "\" executor experienced a security exception error during shutdown (forced)"
-            self.log.fatal "\"" + name + "\" executor shutdown (forced) failed"
+            log.error log_message "forced shutdown encountered a security exception"
+            log.fatal log_message "forced shutdown failure"
           else
-            self.log.info "\"" + name + "\" executor shutdown (forced)"
+            log.info log_message "forced shutdown"
           ensure
             self.executor = nil
           end
