@@ -2,266 +2,149 @@ require "spec_helper"
 
 describe ActsAsExecutor::Executor::Model::Actions do
   before :each do
-    @model = Executor.new :name => example.full_description, :kind => ActsAsExecutor::Executor::Kinds::SINGLE
+    @model = Executor.make
   end
 
-  after :each do
-    @model.destroy
+  it { @model.should_not allow_public_access_for_methods :startup, :execute, :shutdown, :forced_shutdown }
+
+  describe "#startup" do
+    it "should create executor" do
+      @model.send(:executor).should be_nil
+
+      @model.send(:log).should_receive(:debug).with log_message(@model, "startup triggered")
+      @model.send(:log).should_receive(:info).with log_message(@model, "started")
+
+      @model.send :startup
+
+      @model.send(:executor).should_not be_nil
+    end
   end
 
   describe "#execute" do
-    it "should not be accessible publicly" do
-      expect { @model.execute nil, nil, nil, nil, nil }.to raise_error NoMethodError
+    before :each do
+      @clazz = Clazz.make
     end
-    it "should be accessible via send method" do
-      double_rails_logger_and_assign
-      expect { @model.send :execute, double_clazz, nil, nil, nil, nil }.to_not raise_error NoMethodError
+    after :each do
+      @model.send(:executor).shutdown
     end
 
-    context "when valid" do
-      context "non-schedulable executor" do
-        it "should successfully execute a task" do
-          double_rails_logger_and_assign
-          should_receive_rails_booted? true
+    it "should execute a task" do
+      @model.send :startup
 
-          @model.save
+      @model.send(:log).should_receive(:debug).with log_message_with_task(@model, "enqueuing", @clazz, "for execution (one time)")
+      @model.send(:log).should_receive(:info).with log_message_with_task(@model, "enqueued", @clazz, "for execution (one time)")
 
-          instance = double_clazz
-          instance.arguments = { :attribute_one => "attribute_one", :attribute_two => "attribute_two" }
-          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution"
-          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution"
+      future = @model.send :execute, @clazz
+      future.get
 
-          future = @model.send :execute, instance, nil, nil, nil, nil
-          future.get
+      future.is_done.should be_true
+    end
+    it "should execute a one shot task" do
+      @model = Executor.make :kind => ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
+      @model.send :startup
 
-          future.is_done.should be_true
-        end
-      end
-      context "schedulable executor" do
-        it "should successfully execute a one shot task" do
-          double_rails_logger_and_assign
-          should_receive_rails_booted? true
+      @model.send(:log).should_receive(:debug).with log_message_with_task(@model, "enqueuing", @clazz, "for execution (one shot)")
+      @model.send(:log).should_receive(:info).with log_message_with_task(@model, "enqueued", @clazz, "for execution (one shot)")
 
-          @model.kind = ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
-          @model.save
+      future = @model.send :execute, @clazz, ActsAsExecutor::Task::Schedules::ONE_SHOT, 0, nil, ActsAsExecutor::Common::Units::SECONDS
+      future.get
 
-          instance = double_clazz
-          instance.arguments = { :attribute_one => "attribute_one", :attribute_two => "attribute_two" }
-          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution"
-          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution (one shot)"
+      future.is_done.should be_true
+    end
+    it "should execute a fixed delay task" do
+      @model = Executor.make :kind => ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
+      @model.send :startup
 
-          future = @model.send :execute, instance, ActsAsExecutor::Task::Schedules::ONE_SHOT, 0, nil, ActsAsExecutor::Common::Units::SECONDS
-          future.get
+      @model.send(:log).should_receive(:debug).with log_message_with_task(@model, "enqueuing", @clazz, "for execution (fixed delay)")
+      @model.send(:log).should_receive(:info).with log_message_with_task(@model, "enqueued", @clazz, "for execution (fixed delay)")
 
-          future.is_done.should be_true
-        end
-        it "should successfully execute a fixed delay task" do
-          double_rails_logger_and_assign
-          should_receive_rails_booted? true
+      future = @model.send :execute, @clazz, ActsAsExecutor::Task::Schedules::FIXED_DELAY, 0, 2, ActsAsExecutor::Common::Units::SECONDS
 
-          @model.kind = ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
-          @model.save
+      future.should_not be_nil
+    end
+    it "should execute a fixed rate task" do
+      @model = Executor.make :kind => ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
+      @model.send :startup
 
-          instance = double_clazz
-          instance.arguments = { :attribute_one => "attribute_one", :attribute_two => "attribute_two" }
-          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution"
-          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution (fixed delay)"
+      @model.send(:log).should_receive(:debug).with log_message_with_task(@model, "enqueuing", @clazz, "for execution (fixed rate)")
+      @model.send(:log).should_receive(:info).with log_message_with_task(@model, "enqueued", @clazz, "for execution (fixed rate)")
 
-          future = @model.send :execute, instance, ActsAsExecutor::Task::Schedules::FIXED_DELAY, 0, 2, ActsAsExecutor::Common::Units::SECONDS
+      future = @model.send :execute, @clazz, ActsAsExecutor::Task::Schedules::FIXED_RATE, 0, 2, ActsAsExecutor::Common::Units::SECONDS
 
-          future.should_not be_nil
-        end
-        it "should successfully execute a fixed rate task" do
-          double_rails_logger_and_assign
-          should_receive_rails_booted? true
+      future.should_not be_nil
+    end
+    context "when rejected execution exception is thrown" do
+      it "should log error" do
+        @model.send :startup
 
-          @model.kind = ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
-          @model.save
+        @model.send(:log).should_receive(:debug).with log_message_with_task(@model, "enqueuing", @clazz, "for execution (one time)")
+        @model.send(:executor).should_receive(:execute).and_raise Java::java.util.concurrent.RejectedExecutionException.new
+        @model.send(:log).should_receive(:warn).with log_message_with_task(@model, "enqueuing", @clazz, "encountered a rejected execution exception")
 
-          instance = double_clazz
-          instance.arguments = { :attribute_one => "attribute_one", :attribute_two => "attribute_two" }
-          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution"
-          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueued task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution (fixed rate)"
-
-          future = @model.send :execute, instance, ActsAsExecutor::Task::Schedules::FIXED_RATE, 0, 2, ActsAsExecutor::Common::Units::SECONDS
-
-          future.should_not be_nil
-        end
+        @model.send :execute, @clazz
       end
     end
-    context "when invalid" do
-      context "when rejected execution exception error is thrown" do
-        it "should log error" do
-          double_rails_logger_and_assign
-          should_receive_rails_booted? true
+    context "when any other exception is thrown" do
+      it "should log error" do
+        @model = Executor.make :kind => ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
+        @model.send :startup
 
-          @model.save
+        @model.send(:log).should_receive(:debug).with log_message_with_task(@model, "enqueuing", @clazz, "for execution (one time)")
+        @model.send(:log).should_receive(:error).with log_message_with_task(@model, "enqueuing", @clazz, "encountered an unexpected exception. java.lang.IllegalArgumentException: No enum const class java.util.concurrent.TimeUnit.RANDOM")
 
-          instance = double_clazz
-          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution"
-          @model.send(:executor).should_receive(:execute).and_raise Java::java.util.concurrent.RejectedExecutionException.new
-          @model.send(:log).should_receive(:warn).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" experienced a rejected execution exception error"
-
-          @model.send :execute, instance, nil, nil, nil, nil
-        end
-      end
-      context "when any exception error is thrown" do
-        it "should log error" do
-          double_rails_logger_and_assign
-          should_receive_rails_booted? true
-
-          @model.kind = ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
-          @model.save
-
-          instance = double_clazz
-          @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" for execution"
-          @model.send(:log).should_receive(:error).with "\"" + example.full_description + "\" executor enqueuing task \"" + instance.class.name + "\" with arguments \"" + instance.arguments.inspect + "\" experienced an exception error. java.lang.IllegalArgumentException: No enum const class java.util.concurrent.TimeUnit.RANDOM"
-
-          @model.send :execute, instance, nil, nil, nil, "random"
-        end
-      end
-    end
-  end
-
-  describe "#startup" do
-    it "should not be accessible publicly" do
-      expect { @model.startup }.to raise_error NoMethodError
-    end
-    it "should be accessible via send method" do
-      double_rails_logger_and_assign
-      expect { @model.send :startup }.to_not raise_error NoMethodError
-    end
-
-    context "when valid" do
-      it "should create executor" do
-        double_rails_logger_and_assign
-        should_receive_rails_booted? true
-
-        @model.send(:executor).should be_nil
-        @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor startup triggered"
-        @model.send(:log).should_receive(:info).with "\"" + example.full_description + "\" executor started"
-
-        @model.save
-
-        @model.send(:executor).should_not be_nil
-      end
-      it "should not create executor when an executor already exists" do
-        double_rails_logger_and_assign
-        should_receive_rails_booted? true
-
-        @model.save
-        executor = @model.send :executor
-
-        @model.save
-
-        @model.send(:executor).should == executor
-      end
-    end
-    context "when invalid" do
-      it "should not create executor" do
-        should_receive_rails_booted? true
-        @model.name = ""
-        @model.kind = ""
-
-        @model.save
-
-        @model.send(:executor).should be_nil
+        @model.send :execute, @clazz, nil, nil, nil, "random"
       end
     end
   end
 
   describe "#shutdown" do
-    it "should not be accessible publicly" do
-      expect { @model.shutdown }.to raise_error NoMethodError
-    end
-    it "should be accessible via send method" do
-      double_rails_logger_and_assign
-      should_receive_rails_booted? true
-
-      @model.save
-
-      expect { @model.send :shutdown }.to_not raise_error NoMethodError
+    before :each do
+      @model.send :startup
     end
 
-    context "when no error is thrown" do
-      it "should shutdown executor" do
-        double_rails_logger_and_assign
-        should_receive_rails_booted? true
+    it "should shutdown executor" do
+      @model.send(:log).should_receive(:debug).with log_message(@model, "shutdown triggered")
+      @model.send(:executor).should_receive :shutdown
+      @model.send(:log).should_receive(:info).with log_message(@model, "shutdown")
 
-        @model.save
+      @model.send :shutdown
 
-        @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor shutdown triggered"
-        @model.send(:executor).should_receive :shutdown
-        @model.send(:log).should_receive(:info).with "\"" + example.full_description + "\" executor shutdown"
-
-        @model.send :shutdown
-
-        @model.send(:executor).should be_nil
-      end
+      @model.send(:executor).should be_nil
     end
-
-    context "when security exception error is thrown" do
+    context "when security exception is thrown" do
       it "should force shutdown executor" do
-        double_rails_logger_and_assign
-        should_receive_rails_booted? true
-
-        @model.save
-
-        @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor shutdown triggered"
+        @model.send(:log).should_receive(:debug).with log_message(@model, "shutdown triggered")
         @model.send(:executor).should_receive(:shutdown).and_raise Java::java.lang.SecurityException.new
-        @model.send(:log).should_receive(:warn).with "\"" + example.full_description + "\" executor experienced a security exception error during shutdown"
-        @model.should_receive :shutdown_forced
+        @model.send(:log).should_receive(:warn).with log_message(@model, "shutdown encountered a security exception")
+        @model.should_receive :forced_shutdown
 
         @model.send :shutdown
-
-        @model.send(:executor).should be_nil
       end
     end
   end
 
-  describe "#shutdown_forced" do
-    it "should not be accessible publicly" do
-      expect { @model.shutdown_forced }.to raise_error NoMethodError
-    end
-    it "should be accessible via send method" do
-      double_rails_logger_and_assign
-      should_receive_rails_booted? true
-
-      @model.save
-
-      expect { @model.send :shutdown_forced }.to_not raise_error NoMethodError
+  describe "#forced_shutdown" do
+    before :each do
+      @model.send :startup
     end
 
-    context "when no error is thrown" do
-      it "should force shutdown executor" do
-        double_rails_logger_and_assign
-        should_receive_rails_booted? true
+    it "should shutdown executor" do
+      @model.send(:log).should_receive(:debug).with log_message(@model, "forced shutdown triggered")
+      @model.send(:executor).should_receive :shutdown_now
+      @model.send(:log).should_receive(:info).with log_message(@model, "forced shutdown")
 
-        @model.save
+      @model.send :forced_shutdown
 
-        @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor shutdown (forced) triggered"
-        @model.send(:executor).should_receive :shutdown_now
-        @model.send(:log).should_receive(:info).with "\"" + example.full_description + "\" executor shutdown (forced)"
-
-        @model.send :shutdown_forced
-
-        @model.send(:executor).should be_nil
-      end
+      @model.send(:executor).should be_nil
     end
-
-    context "when security exception error is thrown" do
+    context "when security exception is thrown" do
       it "should log error" do
-        double_rails_logger_and_assign
-        should_receive_rails_booted? true
-
-        @model.save
-
-        @model.send(:log).should_receive(:debug).with "\"" + example.full_description + "\" executor shutdown (forced) triggered"
+        @model.send(:log).should_receive(:debug).with log_message(@model, "forced shutdown triggered")
         @model.send(:executor).should_receive(:shutdown_now).and_raise Java::java.lang.SecurityException.new
-        @model.send(:log).should_receive(:error).with "\"" + example.full_description + "\" executor experienced a security exception error during shutdown (forced)"
-        @model.send(:log).should_receive(:fatal).with "\"" + example.full_description + "\" executor shutdown (forced) failed"
+        @model.send(:log).should_receive(:error).with log_message(@model, "forced shutdown encountered a security exception")
+        @model.send(:log).should_receive(:fatal).with log_message(@model, "forced shutdown failure")
 
-        @model.send :shutdown_forced
+        @model.send :forced_shutdown
 
         @model.send(:executor).should be_nil
       end
