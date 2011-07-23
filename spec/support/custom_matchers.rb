@@ -16,10 +16,10 @@ RSpec::Matchers.define :allow_public_access_for_methods do |*methods|
   end
 end
 
-def log_message model, operation
-  "\"" + model.name + "\" executor " + operation
+def log_message model, message
+  "\"" + model.name + "\" executor " + message
 end
 
-def log_message_with_task model, doing, clazz, operation
-  "\"" + model.name + "\" executor " + doing + " task \"" + clazz.class.name + "\" with arguments \"" + clazz.arguments.inspect + "\" " + operation
+def log_message_with_task model, doing, clazz, message
+  "\"" + model.name + "\" executor " + doing + " task \"" + clazz.class.name + "\" with arguments \"" + clazz.arguments.inspect + "\" " + message
 end
