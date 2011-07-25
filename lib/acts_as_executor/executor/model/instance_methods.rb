@@ -1,12 +1,20 @@
 module ActsAsExecutor
   module Executor
     module Model
-      module Actions
+      module InstanceMethods
         def self.included base
+          # Associations
+          base.has_many :tasks, :class_name => base.table_name.singularize.camelize + "Task", :foreign_key => "executor_id"
+
+          # Callbacks
           base.after_find :startup, :if => :can_startup?
           base.after_save :startup, :if => :can_startup?
-
           base.after_destroy :shutdown, :if => :can_shutdown?
+
+          # Validations
+          base.validates :name, :presence => true, :uniqueness => true
+          base.validates :kind, :inclusion => { :in => ActsAsExecutor::Executor::Kinds::ALL }
+          base.validates :size, :numericality => { :only_integer => true, :greater_than_or_equal_to => 1 }, :if => "ActsAsExecutor::Executor::Kinds::REQUIRING_SIZE.include? kind"
         end
 
         private
