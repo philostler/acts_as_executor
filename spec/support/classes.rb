@@ -1,3 +1,6 @@
+# Rails
+Object.const_set "Rails", Class.new
+
 # Logger
 class Logger
   def debug message = nil, &block; end
@@ -20,6 +23,9 @@ ActiveRecord::Schema.define do
 end
 Executor.acts_as_executor
 Executor.log = Logger.new
+
+# ExecutorWithoutActsAsExecutor
+Object.const_set "ExecutorWithoutActsAsExecutor", Class.new(ActiveRecord::Base)
 
 # ExecutorTask
 Object.const_set "ExecutorTask", Class.new(ActiveRecord::Base)
