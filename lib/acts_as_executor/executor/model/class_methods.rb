@@ -7,7 +7,7 @@ module ActsAsExecutor
           send :include, ActsAsExecutor::Executor::Model::InstanceSupportMethods
 
           hash = arguments.last.is_a?(Hash) ? arguments.pop : {}
-          self.log = hash[:logger]
+          self.log = hash[:log]
 
           if ActsAsExecutor.rails_booted?
             all
