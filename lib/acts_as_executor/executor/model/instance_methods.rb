@@ -7,9 +7,9 @@ module ActsAsExecutor
           base.has_many :tasks, :class_name => base.table_name.singularize.camelize + "Task", :foreign_key => "executor_id"
 
           # Callbacks
-          base.after_find :startup, :if => :can_startup?
-          base.after_save :startup, :if => :can_startup?
-          base.after_destroy :shutdown, :if => :can_shutdown?
+          base.after_find :startup, :if => :startup_able?
+          base.after_save :startup, :if => :startup_able?
+          base.after_destroy :shutdown, :if => :shutdown_able?
 
           # Validations
           base.validates :name, :presence => true, :uniqueness => true
