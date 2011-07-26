@@ -1,38 +1,28 @@
 require "spec_helper"
 
 describe ActsAsExecutor::Executor::Kinds do
-  describe "CACHED" do
-    specify { ActsAsExecutor::Executor::Kinds::CACHED.should == "cached" }
-  end
-  describe "FIXED" do
-    specify { ActsAsExecutor::Executor::Kinds::FIXED.should == "fixed" }
-  end
-  describe "SINGLE" do
-    specify { ActsAsExecutor::Executor::Kinds::SINGLE.should == "single" }
-  end
-  describe "SCHEDULED" do
-    specify { ActsAsExecutor::Executor::Kinds::SCHEDULED.should == "scheduled" }
-  end
-  describe "SINGLE_SCHEDULED" do
-    specify { ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED.should == "single_scheduled" }
-  end
+  it { ActsAsExecutor::Executor::Kinds::CACHED.should == "cached" }
 
-  describe "ALL" do
-    specify { ActsAsExecutor::Executor::Kinds::ALL.should include(
-      ActsAsExecutor::Executor::Kinds::CACHED,
-      ActsAsExecutor::Executor::Kinds::FIXED,
-      ActsAsExecutor::Executor::Kinds::SINGLE,
-      ActsAsExecutor::Executor::Kinds::SCHEDULED,
-      ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED) }
-  end
-  describe "ALL_SCHEDULED" do
-    specify { ActsAsExecutor::Executor::Kinds::ALL_SCHEDULED.should include(
-      ActsAsExecutor::Executor::Kinds::SCHEDULED,
-      ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED) }
-  end
-  describe "REQUIRING_SIZE" do
-    specify { ActsAsExecutor::Executor::Kinds::REQUIRING_SIZE.should include(
-      ActsAsExecutor::Executor::Kinds::FIXED,
-      ActsAsExecutor::Executor::Kinds::SCHEDULED) }
-  end
+  it { ActsAsExecutor::Executor::Kinds::FIXED.should == "fixed" }
+
+  it { ActsAsExecutor::Executor::Kinds::SINGLE.should == "single" }
+
+  it { ActsAsExecutor::Executor::Kinds::SCHEDULED.should == "scheduled" }
+
+  it { ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED.should == "single_scheduled" }
+
+  it { ActsAsExecutor::Executor::Kinds::ALL.should include ActsAsExecutor::Executor::Kinds::CACHED,
+                                                           ActsAsExecutor::Executor::Kinds::FIXED,
+                                                           ActsAsExecutor::Executor::Kinds::SINGLE,
+                                                           ActsAsExecutor::Executor::Kinds::SCHEDULED,
+                                                           ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
+  }
+
+  it { ActsAsExecutor::Executor::Kinds::ALL_SCHEDULED.should include ActsAsExecutor::Executor::Kinds::SCHEDULED,
+                                                                     ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
+  }
+
+  it { ActsAsExecutor::Executor::Kinds::REQUIRING_SIZE.should include ActsAsExecutor::Executor::Kinds::FIXED,
+                                                                      ActsAsExecutor::Executor::Kinds::SCHEDULED
+  }
 end
