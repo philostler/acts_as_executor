@@ -17,15 +17,15 @@ module ActsAsExecutor
           @@executors[id] = executor
         end
 
-        def can_startup?
-          if self.executor == nil && ActsAsExecutor.rails_booted?
+        def startup_able?
+          if executor == nil && ActsAsExecutor.rails_initialized?
             return true
           end
           return false
         end
 
-        def can_shutdown?
-          if self.executor != nil && ActsAsExecutor.rails_booted?
+        def shutdown_able?
+          if executor != nil && ActsAsExecutor.rails_initialized?
             return true
           end
           return false
