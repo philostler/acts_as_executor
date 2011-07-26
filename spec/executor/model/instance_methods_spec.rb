@@ -33,6 +33,7 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
 
       future.is_done.should be_true
     end
+
     it "should execute a one shot task" do
       @model = Executor.make :kind => ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
       @model.send :startup
@@ -45,6 +46,7 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
 
       future.is_done.should be_true
     end
+
     it "should execute a fixed delay task" do
       @model = Executor.make :kind => ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
       @model.send :startup
@@ -56,6 +58,7 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
 
       future.should_not be_nil
     end
+
     it "should execute a fixed rate task" do
       @model = Executor.make :kind => ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
       @model.send :startup
@@ -67,6 +70,7 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
 
       future.should_not be_nil
     end
+
     context "when rejected execution exception is thrown" do
       it "should log error" do
         @model.send :startup
@@ -78,6 +82,7 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
         @model.send :execute, @clazz
       end
     end
+
     context "when any other exception is thrown" do
       it "should log error" do
         @model = Executor.make :kind => ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
@@ -103,6 +108,7 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
 
       @model.send(:executor).should be_nil
     end
+
     context "when security exception is thrown" do
       it "should force shutdown executor" do
         @model.send(:log).should_receive(:debug).with log_message(@model, "shutdown triggered")
@@ -127,6 +133,7 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
 
       @model.send(:executor).should be_nil
     end
+
     context "when security exception is thrown" do
       it "should log error" do
         @model.send(:log).should_receive(:debug).with log_message(@model, "forced shutdown triggered")

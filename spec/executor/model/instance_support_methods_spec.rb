@@ -44,6 +44,7 @@ describe ActsAsExecutor::Executor::Model::InstanceSupportMethods do
           @model.should be_startup_able
         end
       end
+
       context "when executor has been set" do
         it "should return false" do
           @model.send :startup
@@ -65,6 +66,7 @@ describe ActsAsExecutor::Executor::Model::InstanceSupportMethods do
           @model.should be_shutdown_able
         end
       end
+
       context "when executor has not been set" do
         it "should return false" do
           @model.should_not be_shutdown_able
