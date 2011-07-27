@@ -2,85 +2,76 @@ require "spec_helper"
 
 describe ActsAsExecutor::Executor::Factory do
   describe "#create" do
-    context "when valid" do
-      context "when specifying cached kind" do
-        it "should return a ExecutorService" do
-          ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::CACHED).should be_a Java::java.util.concurrent.ExecutorService
-        end
-      end
+    it "should invoke matching create method for kind" do
+      ActsAsExecutor::Executor::Factory.should_receive :create_cached
 
-      context "when specifying fixed kind" do
-        context "when valid" do
-          it "should return a ExecutorService of size 1" do
-            e = ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::FIXED, 1)
-            e.should be_a Java::java.util.concurrent.ExecutorService
-            e.core_pool_size.should == 1
-          end
-          it "should return a ExecutorService of size 50" do
-            e = ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::FIXED, 50)
-            e.should be_a Java::java.util.concurrent.ExecutorService
-            e.core_pool_size.should == 50
-          end
-          it "should return a ExecutorService of size 999999" do
-            e = ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::FIXED, 999999)
-            e.should be_a Java::java.util.concurrent.ExecutorService
-            e.core_pool_size.should == 999999
-          end
-        end
-        context "when invalid" do
-          it "should throw TypeError for size nil" do
-            expect { ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::FIXED) }.to raise_error TypeError, "size cannot be nil"
-          end
-          it "should throw ArgumentError for size 0" do
-            expect { ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::FIXED, 0) }.to raise_error ArgumentError, "size must be larger than 0"
-          end
-        end
-      end
-
-      context "when specifying single kind" do
-        it "should return a ExecutorService" do
-          ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::SINGLE).should be_a Java::java.util.concurrent.ExecutorService
-        end
-      end
-
-      context "when specifying scheduled kind" do
-        context "when valid" do
-          it "should return a ScheduledExecutorService of size 1" do
-            e = ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::SCHEDULED, 1)
-            e.should be_a Java::java.util.concurrent.ScheduledExecutorService
-            e.core_pool_size.should == 1
-          end
-          it "should return a ScheduledExecutorService of size 50" do
-            e = ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::SCHEDULED, 50)
-            e.should be_a Java::java.util.concurrent.ScheduledExecutorService
-            e.core_pool_size.should == 50
-          end
-          it "should return a ScheduledExecutorService of size 999999" do
-            e = ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::SCHEDULED, 999999)
-            e.should be_a Java::java.util.concurrent.ScheduledExecutorService
-            e.core_pool_size.should == 999999
-          end
-        end
-        context "when invalid" do
-          it "should throw TypeError for size nil" do
-            expect { ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::SCHEDULED) }.to raise_error TypeError, "size cannot be nil"
-          end
-          it "should throw ArgumentError for size 0" do
-            expect { ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::SCHEDULED, 0) }.to raise_error ArgumentError, "size must be larger than 0"
-          end
-        end
-      end
-
-      context "when specifying single_scheduled kind" do
-        it "should return a ScheduledExecutorService" do
-          ActsAsExecutor::Executor::Factory.create(ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED).should be_a Java::java.util.concurrent.ScheduledExecutorService
-        end
-      end
+      ActsAsExecutor::Executor::Factory.create ActsAsExecutor::Executor::Kinds::CACHED
     end
-    context "when invalid" do
-      it "should return nil for nil kind" do
+
+    context "when no kind is given" do
+      it "should return nil" do
         ActsAsExecutor::Executor::Factory.create(nil).should be_nil
       end
+    end
+  end
+
+  describe "#create_cached" do
+    it "should return an executor" do
+      ActsAsExecutor::Executor::Factory.create_cached.should be_a_kind_of Java::java.util.concurrent.ExecutorService
+    end
+  end
+
+  describe "#create_fixed" do
+    it "should return an executor" do
+      executor = ActsAsExecutor::Executor::Factory.create_fixed 5
+
+      executor.should be_a_kind_of Java::java.util.concurrent.ExecutorService
+      executor.core_pool_size.should == 5
+    end
+
+    context "when no size is given" do
+      it "should raise a type error" do
+        expect { ActsAsExecutor::Executor::Factory.create_fixed nil }.to raise_error TypeError, "size cannot be nil"
+      end
+    end
+
+    context "when given size is less than or equal to zero" do
+      it "should raise an argument error" do
+        expect { ActsAsExecutor::Executor::Factory.create_fixed 0 }.to raise_error ArgumentError, "size must be larger than 0"
+      end
+    end
+  end
+
+  describe "#create_single" do
+    it "should return an executor" do
+      ActsAsExecutor::Executor::Factory.create_single.should be_a_kind_of Java::java.util.concurrent.ExecutorService
+    end
+  end
+
+  describe "#create_scheduled" do
+    it "should return an executor" do
+      executor = ActsAsExecutor::Executor::Factory.create_scheduled 5
+
+      executor.should be_a_kind_of Java::java.util.concurrent.ScheduledExecutorService
+      executor.core_pool_size.should == 5
+    end
+
+    context "when no size is given" do
+      it "should raise a type error" do
+        expect { ActsAsExecutor::Executor::Factory.create_scheduled nil }.to raise_error TypeError, "size cannot be nil"
+      end
+    end
+
+    context "when given size is less than or equal to zero" do
+      it "should raise an argument error" do
+        expect { ActsAsExecutor::Executor::Factory.create_scheduled 0 }.to raise_error ArgumentError, "size must be larger than 0"
+      end
+    end
+  end
+
+  describe "#create_single_scheduled" do
+    it "should return an executor" do
+      ActsAsExecutor::Executor::Factory.create_single_scheduled.should be_a_kind_of Java::java.util.concurrent.ScheduledExecutorService
     end
   end
 end
