@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe ActsAsExecutor::Executor::Model::ClassMethods do
   subject { ActiveRecord::Base }
-  it { should be_kind_of ActsAsExecutor::Executor::Model::ClassMethods }
+  it { should be_a ActsAsExecutor::Executor::Model::ClassMethods }
 
   describe "#acts_as_executor" do
     subject { Executor }
