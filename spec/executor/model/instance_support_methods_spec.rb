@@ -6,7 +6,7 @@ describe ActsAsExecutor::Executor::Model::InstanceSupportMethods do
   it { @model.should allow_public_access_for_methods :schedulable? }
   it { @model.should_not allow_public_access_for_methods :can_startup?, :can_shutdown?, :executor, :executor=, :log, :log_message, :log_message_with_task }
 
-  describe "schedulable?" do
+  describe "#schedulable?" do
     it "should return true when schedulable" do
       @model.kind = ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
 
@@ -35,7 +35,7 @@ describe ActsAsExecutor::Executor::Model::InstanceSupportMethods do
     end
   end
 
-  describe "startup_able?" do
+  describe "#startup_able?" do
     context "when rails initialized" do
       before(:each) { ActsAsExecutor.should_receive(:rails_initialized?).at_most(:once).and_return true }
 
@@ -55,7 +55,7 @@ describe ActsAsExecutor::Executor::Model::InstanceSupportMethods do
     end
   end
 
-  describe "shutdown_able?" do
+  describe "#shutdown_able?" do
     context "when rails initialized" do
       before(:each) { ActsAsExecutor.should_receive(:rails_initialized?).at_most(:once).and_return true }
 
