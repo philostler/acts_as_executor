@@ -17,7 +17,7 @@ describe ActsAsExecutor::Executor::Factory do
 
   describe "#create_cached" do
     it "should return an executor" do
-      ActsAsExecutor::Executor::Factory.create_cached.should be_a_kind_of Java::java.util.concurrent.ExecutorService
+      ActsAsExecutor::Executor::Factory.create_cached.should be_a Java::java.util.concurrent.ExecutorService
     end
   end
 
@@ -25,7 +25,7 @@ describe ActsAsExecutor::Executor::Factory do
     it "should return an executor" do
       executor = ActsAsExecutor::Executor::Factory.create_fixed 5
 
-      executor.should be_a_kind_of Java::java.util.concurrent.ExecutorService
+      executor.should be_a Java::java.util.concurrent.ExecutorService
       executor.core_pool_size.should == 5
     end
 
@@ -44,7 +44,7 @@ describe ActsAsExecutor::Executor::Factory do
 
   describe "#create_single" do
     it "should return an executor" do
-      ActsAsExecutor::Executor::Factory.create_single.should be_a_kind_of Java::java.util.concurrent.ExecutorService
+      ActsAsExecutor::Executor::Factory.create_single.should be_a Java::java.util.concurrent.ExecutorService
     end
   end
 
@@ -52,7 +52,7 @@ describe ActsAsExecutor::Executor::Factory do
     it "should return an executor" do
       executor = ActsAsExecutor::Executor::Factory.create_scheduled 5
 
-      executor.should be_a_kind_of Java::java.util.concurrent.ScheduledExecutorService
+      executor.should be_a Java::java.util.concurrent.ScheduledExecutorService
       executor.core_pool_size.should == 5
     end
 
@@ -71,7 +71,7 @@ describe ActsAsExecutor::Executor::Factory do
 
   describe "#create_single_scheduled" do
     it "should return an executor" do
-      ActsAsExecutor::Executor::Factory.create_single_scheduled.should be_a_kind_of Java::java.util.concurrent.ScheduledExecutorService
+      ActsAsExecutor::Executor::Factory.create_single_scheduled.should be_a Java::java.util.concurrent.ScheduledExecutorService
     end
   end
 end
