@@ -1,37 +1,20 @@
 require "spec_helper"
 
 describe ActsAsExecutor::Common::FutureTask do
-  before :each do
-    @future_task = double_future_task
-  end
+  before(:each) { @model = ActsAsExecutor::Common::FutureTask.new Clazz.make, nil }
 
-  it "should be kind of Java::java.util.concurrent.FutureTask" do
-    @future_task.should be_kind_of(Java::java.util.concurrent.FutureTask)
-  end
+  it { @model.should be_a Java::java.util.concurrent.FutureTask }
 
-  it "should not respond to #done_handler" do
-    @future_task.should_not respond_to :done_handler
-  end
-  it "should respond to #done_handler=" do
-    @future_task.should respond_to :done_handler=
-  end
+  describe "#done" do
+    context "when handler exists" do
+      it "should invoke handler" do
+        handler = double "Handler"
+        handler.stub :done_handler
+        @model.done_handler = handler.method :done_handler
 
-  context "#done" do
-    context "done_handler exists" do
-      it "should call handler" do
-        double_done_handler = double "DoneHandler"
-        double_done_handler.stub :done_handler
+        handler.should_receive :done_handler
 
-        @future_task.done_handler = double_done_handler.method :done_handler
-
-        double_done_handler.should_receive(:done_handler)
-
-        @future_task.done
-      end
-    end
-    context "done_handler does not exist" do
-      it "should not call handler" do
-        expect { @future_task.done }.to_not raise_error
+        @model.done
       end
     end
   end
