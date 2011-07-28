@@ -1,10 +1,10 @@
 module ActsAsExecutor
   module Common
     class FutureTask < Java::java.util.concurrent.FutureTask
-      attr_accessor :task
+      attr_writer :done_handler
 
       def done
-       task.destroy
+        @done_handler.call if @done_handler
       end
     end
   end
