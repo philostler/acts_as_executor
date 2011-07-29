@@ -1,92 +1,40 @@
 require "spec_helper"
 
 describe ActsAsExecutor::Task::Clazz do
-  before :each do
-    @clazz = double_clazz
-  end
+  before(:each) { @model = Clazz.make }
 
-  describe "when included" do
-    it "should be kind of Java::java.lang.Runnable" do
-      @clazz.should be_kind_of(Java::java.lang.Runnable)
-    end
+  it { @model.should be_a Java::java.lang.Runnable }
+  it { @model.should_not allow_public_access_for_methods :run }
 
-    it "should respond to #arguments" do
-      @clazz.should respond_to :arguments
-    end
-    it "should respond to #arguments=" do
-      @clazz.should respond_to :arguments=
-    end
+  describe "#run" do
+    it "should invoke execute" do
+      @model.should_receive :execute
 
-    it "should not respond to #uncaught_exception_handler" do
-      @clazz.should_not respond_to :uncaught_exception_handler
+      @model.send :run
     end
-    it "should respond to #uncaught_exception_handler=" do
-      @clazz.should respond_to :uncaught_exception_handler=
-    end
+    it "should create accessor for each arguments member" do
+      @model.send :run
 
-    it "should not respond to #run public" do
-      @clazz.should_not respond_to :run
-    end
-    it "should respond to #run private" do
-      @clazz.respond_to?(:run, true).should be_true
-    end
-
-    context "#run" do
-      it "should respond to each argument as a getter" do
-        @clazz.should_receive :execute
-
-        @clazz.arguments = { :attribute_one => "attribute_one", :attribute_two => "attribute_two" }
-        @clazz.send :run
-
-        @clazz.should respond_to :attribute_one
-        @clazz.attribute_one.should == "attribute_one"
-        @clazz.should respond_to :attribute_two
-        @clazz.attribute_two.should == "attribute_two"
+      @model.arguments.each_pair do |key, value|
+        @model.should respond_to key
+        @model.send(key).should == value
       end
-      it "should respond to each argument as a setter" do
-        @clazz.should_receive :execute
+    end
 
-        @clazz.arguments = { :attribute_one => "attribute_one", :attribute_two => "attribute_two" }
-        @clazz.send :run
+    context "when any exception is thrown" do
+      context "when uncaught exception handler exists" do
+        it "should invoke handler" do
+          handler = double "Handler"
+          handler.stub :uncaught_exception_handler
+          @model.uncaught_exception_handler = handler.method :uncaught_exception_handler
 
-        @clazz.should respond_to :attribute_one=
-        @clazz.should respond_to :attribute_two=
-      end
-      it "should respond to new arguments between invokes" do
-        @clazz.should_receive(:execute).twice
+          error = StandardError.new
+          @model.should_receive(:execute).and_raise error
 
-        @clazz.arguments = { :attribute_one => "attribute_one", :attribute_two => "attribute_two" }
-        @clazz.send :run
+          handler.should_receive(:uncaught_exception_handler).with error
 
-        @clazz.should respond_to :attribute_one
-        @clazz.attribute_one.should == "attribute_one"
-        @clazz.should respond_to :attribute_two
-        @clazz.attribute_two.should == "attribute_two"
-        @clazz.should_not respond_to :attribute_three
-        @clazz.should_not respond_to :attribute_fout
-
-        @clazz.arguments = { :attribute_three => "attribute_three", :attribute_four => "attribute_four" }
-        @clazz.send :run
-        @clazz.should respond_to :attribute_one
-        @clazz.attribute_one.should == "attribute_one"
-        @clazz.should respond_to :attribute_two
-        @clazz.attribute_two.should == "attribute_two"
-        @clazz.should respond_to :attribute_three
-        @clazz.attribute_three.should == "attribute_three"
-        @clazz.should respond_to :attribute_four
-        @clazz.attribute_four.should == "attribute_four"
-      end
-      it "should catch uncaught exceptions and invoke uncaught exception handler" do
-        double_uncaught_exception_handler = double "UncaughtExceptionHandler"
-        double_uncaught_exception_handler.stub :uncaught_exception_handler
-
-        @clazz.uncaught_exception_handler = double_uncaught_exception_handler.method :uncaught_exception_handler
-
-        exception = Exception.new
-        @clazz.should_receive(:execute).and_raise exception
-        double_uncaught_exception_handler.should_receive(:uncaught_exception_handler).with(exception)
-
-        @clazz.send :run
+          @model.send :run
+        end
       end
     end
   end
