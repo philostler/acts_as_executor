@@ -13,14 +13,14 @@ module ActsAsExecutor
           @@futures[id] = future
         end
 
-        def enqueue_able?
+        def enqueueable?
           if future == nil
             return true
           end
           return false
         end
 
-        def cancel_able?
+        def cancelable?
           if future != nil
             return true
           end

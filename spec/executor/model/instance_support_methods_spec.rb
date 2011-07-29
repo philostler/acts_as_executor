@@ -35,13 +35,13 @@ describe ActsAsExecutor::Executor::Model::InstanceSupportMethods do
     end
   end
 
-  describe "#startup_able?" do
+  describe "#startupable?" do
     context "when rails initialized" do
       before(:each) { ActsAsExecutor.should_receive(:rails_initialized?).at_most(:once).and_return true }
 
       context "when executor has not been set" do
         it "should return true" do
-          @model.should be_startup_able
+          @model.should be_startupable
         end
       end
 
@@ -49,13 +49,13 @@ describe ActsAsExecutor::Executor::Model::InstanceSupportMethods do
         it "should return false" do
           @model.send :startup
 
-          @model.should_not be_startup_able
+          @model.should_not be_startupable
         end
       end
     end
   end
 
-  describe "#shutdown_able?" do
+  describe "#shutdownable?" do
     context "when rails initialized" do
       before(:each) { ActsAsExecutor.should_receive(:rails_initialized?).at_most(:once).and_return true }
 
@@ -63,13 +63,13 @@ describe ActsAsExecutor::Executor::Model::InstanceSupportMethods do
         it "should return true" do
           @model.send :startup
 
-          @model.should be_shutdown_able
+          @model.should be_shutdownable
         end
       end
 
       context "when executor has not been set" do
         it "should return false" do
-          @model.should_not be_shutdown_able
+          @model.should_not be_shutdownable
         end
       end
     end

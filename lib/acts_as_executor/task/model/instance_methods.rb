@@ -7,9 +7,9 @@ module ActsAsExecutor
           base.belongs_to :executor, :class_name => base.table_name.sub(/_tasks/, "").camelize
 
           # Callbacks
-          base.after_find :enqueue, :if => :enqueue_able?
-          base.after_save :enqueue, :if => :enqueue_able?
-          base.after_destroy :cancel, :if => :cancel_able?
+          base.after_find :enqueue, :if => :enqueueable?
+          base.after_save :enqueue, :if => :enqueueable?
+          base.after_destroy :cancel, :if => :cancelable?
 
           # Serialization
           base.serialize :arguments, Hash
