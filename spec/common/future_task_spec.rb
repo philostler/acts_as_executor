@@ -6,7 +6,7 @@ describe ActsAsExecutor::Common::FutureTask do
   it { @model.should be_a Java::java.util.concurrent.FutureTask }
 
   describe "#done" do
-    context "when handler exists" do
+    context "when done handler exists" do
       it "should invoke handler" do
         handler = double "Handler"
         handler.stub :done_handler
