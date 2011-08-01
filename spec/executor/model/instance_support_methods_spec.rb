@@ -3,8 +3,7 @@ require "spec_helper"
 describe ActsAsExecutor::Executor::Model::InstanceSupportMethods do
   before(:each) { @model = Executor.make }
 
-  it { @model.should allow_public_access_for_methods :schedulable? }
-  it { @model.should_not allow_public_access_for_methods :can_startup?, :can_shutdown?, :executor, :executor=, :log, :log_message, :log_message_with_task }
+  it { @model.should_not allow_public_access_for_methods :executor, :executor=, :startupable?, :shutdownable?, :log, :log_message, :log_message_with_task }
 
   describe "#schedulable?" do
     it "should return true when schedulable" do
