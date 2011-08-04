@@ -1,6 +1,8 @@
 require "active_model"
 require "active_record"
 
+require "acts_as_executor/version"
+
 require "acts_as_executor/common/future_task"
 require "acts_as_executor/common/units"
 
@@ -25,7 +27,7 @@ ActiveRecord::Base.send :extend, ActsAsExecutor::Executor::Model::ClassMethods
 ActiveRecord::Base.send :extend, ActsAsExecutor::Task::Model::ClassMethods
 
 module ActsAsExecutor
-  def self.rails_booted?
-    File.basename($0) == "rails"
+  def self.rails_initialized?
+    File.basename($0) != "rake"
   end
 end
