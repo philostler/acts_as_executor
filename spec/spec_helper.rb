@@ -1,5 +1,4 @@
 require "acts_as_executor"
-require "acts_as_executor/version"
 
 require "machinist/active_record"
 
