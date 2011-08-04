@@ -19,7 +19,7 @@ require "acts_as_executor/task/model/instance_methods"
 require "acts_as_executor/task/model/instance_support_methods"
 
 require "acts_as_executor/validators/class_exists_validator"
-require "acts_as_executor/validators/class_includes_module_validator"
+require "acts_as_executor/validators/class_includes_validator"
 
 ActiveRecord::Base.send :extend, ActsAsExecutor::Executor::Model::ClassMethods
 ActiveRecord::Base.send :extend, ActsAsExecutor::Task::Model::ClassMethods
