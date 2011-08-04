@@ -9,7 +9,7 @@ module ActsAsExecutor
           hash = arguments.last.is_a?(Hash) ? arguments.pop : {}
           self.log = hash[:log]
 
-          if ActsAsExecutor.rails_booted?
+          if ActsAsExecutor.rails_initialized?
             all
             at_exit do
               all.each do |e|
