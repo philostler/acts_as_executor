@@ -5,7 +5,10 @@ Executor.blueprint do
 end
 
 ExecutorTask.blueprint do
-  id   { "#{sn}" }
+  id        { "#{sn}" }
+  executor
+  clazz     { "Clazz" }
+  arguments { {:attribute_one => "attribute_one_value", :attribute_two => "attribute_two_value"} }
 end
 
 Clazz.blueprint do
