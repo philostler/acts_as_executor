@@ -49,9 +49,9 @@ module ActsAsExecutor
             log.info log_message_with_task "enqueued", clazz, "for execution (" + humanized_schedule + ")"
             future
           rescue Java::java.util.concurrent.RejectedExecutionException
-            log.warn log_message_with_task "enqueuing", clazz,  "encountered a rejected execution exception"
+            log.warn log_message_with_task "enqueuing", clazz, "encountered a rejected execution exception"
           rescue Exception => exception
-            log.error log_message_with_task "enqueuing", clazz,  "encountered an unexpected exception. " + exception
+            log.error log_message_with_task "enqueuing", clazz, "encountered an unexpected exception. " + exception
           end
         end
 
