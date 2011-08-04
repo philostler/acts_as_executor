@@ -6,7 +6,7 @@ describe ClassIncludesValidator do
   it { @model.should be_a ActiveModel::EachValidator }
 
   describe "#validate_each" do
-    context "when class does not include module" do
+    context "when class does not include" do
       it "should set error message" do
         attribute = "clazz"
         record = double "Record"
