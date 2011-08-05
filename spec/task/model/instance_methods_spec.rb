@@ -25,7 +25,7 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
 
     context "when any exception is thrown" do
       it "should log error" do
-        error = StandardError.new
+        error = RuntimeError.new
 
         @model.should_receive(:instantiate).and_raise error
         @model.executor.send(:log).should_receive(:error).with log_message_with_task(@model.executor, "instantiating", @clazz, "encountered an unexpected exception. " + error)
@@ -56,7 +56,7 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
     before(:each) { @clazz = Clazz.make }
 
     it "should log error" do
-      error = StandardError.new
+      error = RuntimeError.new
 
       @model.executor.send(:log).should_receive(:error).with log_message_with_task(@model.executor, "executing", @clazz, "encountered an uncaught exception. " + error)
 
