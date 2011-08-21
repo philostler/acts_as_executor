@@ -16,9 +16,9 @@ ActiveRecord::Schema.define do
   self.verbose = false
 
   create_table :executors, :force => true do |t|
-    t.string  :name
-    t.string  :kind
-    t.integer :size
+    t.string   :name
+    t.integer  :max_tasks
+    t.boolean  :schedulable
   end
 end
 Executor.acts_as_executor

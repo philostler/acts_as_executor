@@ -1,7 +1,7 @@
 Executor.blueprint do
-  id   { "#{sn}" }
-  name { "name#{sn}" }
-  kind { ActsAsExecutor::Executor::Kinds::SINGLE }
+  id        { "#{sn}" }
+  name      { "name#{sn}" }
+  max_tasks { 1 }
 end
 
 ExecutorTask.blueprint do
