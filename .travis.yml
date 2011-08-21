@@ -1,2 +1,2 @@
 rvm: jruby
-script: "gem install rake"
+before_script: "gem install rake"
