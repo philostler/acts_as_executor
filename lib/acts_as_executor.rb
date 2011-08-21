@@ -7,7 +7,6 @@ require "acts_as_executor/common/future_task"
 require "acts_as_executor/common/units"
 
 require "acts_as_executor/executor/factory"
-require "acts_as_executor/executor/kinds"
 
 require "acts_as_executor/executor/model/class_methods"
 require "acts_as_executor/executor/model/instance_methods"
