@@ -13,14 +13,13 @@ module ActsAsExecutor
 
           # Validations
           base.validates :name, :presence => true, :uniqueness => true
-          base.validates :kind, :inclusion => { :in => ActsAsExecutor::Executor::Kinds::ALL }
-          base.validates :size, :numericality => { :only_integer => true, :greater_than_or_equal_to => 1 }, :if => "ActsAsExecutor::Executor::Kinds::REQUIRING_SIZE.include? kind"
+          base.validates :max_tasks, :numericality => { :only_integer => true, :greater_than_or_equal_to => 1 }
         end
 
         private
         def startup
           log.debug log_message "startup triggered"
-          self.executor = ActsAsExecutor::Executor::Factory.create kind, size
+          self.executor = ActsAsExecutor::Executor::Factory.create max_tasks, schedulable
           log.info log_message "started"
 
           tasks.all

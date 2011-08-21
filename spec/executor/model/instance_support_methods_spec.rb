@@ -5,18 +5,6 @@ describe ActsAsExecutor::Executor::Model::InstanceSupportMethods do
 
   it { @model.should_not allow_public_access_for_methods :executor, :executor=, :startupable?, :shutdownable?, :log, :log_message, :log_message_with_task }
 
-  describe "#schedulable?" do
-    it "should return true when schedulable" do
-      @model.kind = ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
-
-      @model.should be_schedulable
-    end
-
-    it "should return false when not schedulable" do
-      @model.should_not be_schedulable
-    end
-  end
-
   describe "#executor" do
     it "should return executor" do
       executor = double "Executor"

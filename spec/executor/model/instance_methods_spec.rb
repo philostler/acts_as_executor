@@ -35,7 +35,7 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
     end
 
     it "should execute a one shot task" do
-      @model = Executor.make :kind => ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
+      @model = Executor.make :max_tasks => 1, :schedulable => true
       @model.send :startup
 
       @model.send(:log).should_receive(:debug).with log_message_with_task(@model, "enqueuing", @clazz, "for execution (one shot)")
@@ -48,7 +48,7 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
     end
 
     it "should execute a fixed delay task" do
-      @model = Executor.make :kind => ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
+      @model = Executor.make :max_tasks => 1, :schedulable => true
       @model.send :startup
 
       @model.send(:log).should_receive(:debug).with log_message_with_task(@model, "enqueuing", @clazz, "for execution (fixed delay)")
@@ -60,7 +60,7 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
     end
 
     it "should execute a fixed rate task" do
-      @model = Executor.make :kind => ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
+      @model = Executor.make :max_tasks => 1, :schedulable => true
       @model.send :startup
 
       @model.send(:log).should_receive(:debug).with log_message_with_task(@model, "enqueuing", @clazz, "for execution (fixed rate)")
@@ -85,7 +85,7 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
 
     context "when any other exception is thrown" do
       it "should log error" do
-        @model = Executor.make :kind => ActsAsExecutor::Executor::Kinds::SINGLE_SCHEDULED
+        @model = Executor.make :max_tasks => 1, :schedulable => true
         @model.send :startup
 
         @model.send(:log).should_receive(:debug).with log_message_with_task(@model, "enqueuing", @clazz, "for execution (one time)")

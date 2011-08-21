@@ -2,10 +2,6 @@ module ActsAsExecutor
   module Executor
     module Model
       module InstanceSupportMethods
-        def schedulable?
-          ActsAsExecutor::Executor::Kinds::ALL_SCHEDULED.include? kind
-        end
-
         private
         @@executors = Hash.new
         def executor
