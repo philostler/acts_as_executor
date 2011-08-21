@@ -1,2 +1,1 @@
 rvm: jruby
-before_script: "gem list"
