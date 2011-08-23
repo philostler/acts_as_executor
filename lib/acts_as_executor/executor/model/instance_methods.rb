@@ -13,7 +13,7 @@ module ActsAsExecutor
 
           # Validations
           base.validates :name, :presence => true, :uniqueness => true
-          base.validates :max_tasks, :numericality => { :only_integer => true, :greater_than_or_equal_to => 1 }
+          base.validates :max_tasks, :numericality => { :only_integer => true, :greater_than_or_equal_to => 1 }, :allow_nil => true
         end
 
         private
