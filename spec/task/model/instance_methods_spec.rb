@@ -24,11 +24,11 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
     end
 
     context "when any exception is thrown" do
-      it "should log error" do
-        error = RuntimeError.new
+      it "should log exception" do
+        exception = RuntimeError.new
 
-        @model.should_receive(:instantiate).and_raise error
-        @model.executor.send(:log).should_receive(:error).with log_message_with_task(@model.executor, "instantiating", @clazz, "encountered an unexpected exception. " + error)
+        @model.should_receive(:instantiate).and_raise exception
+        @model.executor.send(:log).should_receive(:error).with log_message_with_task(@model.executor, "instantiating", @clazz, "encountered an unexpected exception. " + exception)
 
         @model.send :enqueue
       end
@@ -55,12 +55,12 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
   describe "#uncaught_exception_handler" do
     before(:each) { @clazz = Clazz.make }
 
-    it "should log error" do
-      error = RuntimeError.new
+    it "should log exception" do
+      exception = RuntimeError.new
 
-      @model.executor.send(:log).should_receive(:error).with log_message_with_task(@model.executor, "executing", @clazz, "encountered an uncaught exception. " + error)
+      @model.executor.send(:log).should_receive(:error).with log_message_with_task(@model.executor, "executing", @clazz, "encountered an uncaught exception. " + exception)
 
-      @model.send :uncaught_exception_handler, error
+      @model.send :uncaught_exception_handler, exception
     end
   end
 

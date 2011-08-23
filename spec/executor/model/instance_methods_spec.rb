@@ -72,7 +72,7 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
     end
 
     context "when rejected execution exception is thrown" do
-      it "should log error" do
+      it "should log exception" do
         @model.send :startup
 
         @model.send(:log).should_receive(:debug).with log_message_with_task(@model, "enqueuing", @clazz, "for execution (one time)")
@@ -84,7 +84,7 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
     end
 
     context "when any other exception is thrown" do
-      it "should log error" do
+      it "should log exception" do
         @model = Executor.make :max_tasks => 1, :schedulable => true
         @model.send :startup
 
@@ -135,7 +135,7 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
     end
 
     context "when security exception is thrown" do
-      it "should log error" do
+      it "should log exception" do
         @model.send(:log).should_receive(:debug).with log_message(@model, "forced shutdown triggered")
         @model.send(:executor).should_receive(:shutdown_now).and_raise Java::java.lang.SecurityException.new
         @model.send(:log).should_receive(:error).with log_message(@model, "forced shutdown encountered a security exception")

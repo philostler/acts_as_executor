@@ -28,11 +28,11 @@ describe ActsAsExecutor::Task::Clazz do
           handler.stub :uncaught_exception_handler
           @model.uncaught_exception_handler = handler.method :uncaught_exception_handler
 
-          error = RuntimeError.new
+          exception = RuntimeError.new
 
-          @model.should_receive(:execute).and_raise error
+          @model.should_receive(:execute).and_raise exception
 
-          handler.should_receive(:uncaught_exception_handler).with error
+          handler.should_receive(:uncaught_exception_handler).with exception
 
           @model.send :run
         end
