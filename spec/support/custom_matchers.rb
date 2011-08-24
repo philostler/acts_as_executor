@@ -16,10 +16,11 @@ RSpec::Matchers.define :allow_public_access_for_methods do |*methods|
   end
 end
 
-def log_message model, message
-  "\"" + model.name + "\" executor " + message
+def log_statement executor_name, statement
+  "\"" + executor_name + "\" " + statement
 end
 
-def log_message_with_task model, doing, clazz, message
-  "\"" + model.name + "\" executor " + doing + " task \"" + clazz.class.name + "\" with arguments \"" + clazz.arguments.inspect + "\" " + message
+def log_message executor_name, doing, task_id, clazz_name, message = ""
+  if message.kind_of? Hash then message = "with \"" + message.inspect + "\"" end 
+  "\"" + executor_name + "\" " + doing + " \"" + task_id + "#" + clazz_name + "\" " + message
 end
