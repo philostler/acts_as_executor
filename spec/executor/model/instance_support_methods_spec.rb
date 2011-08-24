@@ -3,7 +3,7 @@ require "spec_helper"
 describe ActsAsExecutor::Executor::Model::InstanceSupportMethods do
   before(:each) { @model = Executor.make }
 
-  it { @model.should_not allow_public_access_for_methods :executor, :executor=, :startupable?, :shutdownable?, :log, :log_message, :log_message_with_task }
+  it { @model.should_not allow_public_access_for_methods :executor, :executor=, :startupable?, :shutdownable?, :log }
 
   describe "#executor" do
     it "should return executor" do
@@ -65,20 +65,6 @@ describe ActsAsExecutor::Executor::Model::InstanceSupportMethods do
   describe "#log" do
     it "should return class log" do
       @model.send(:log).should == Executor.log
-    end
-  end
-
-  describe "#log_message" do
-    it "should return log message" do
-      @model.send(:log_message, "message").should == log_message(@model, "message")
-    end
-  end
-
-  describe "#log_message_with_task" do
-    it "should return log message" do
-      clazz = Clazz.make
-
-      @model.send(:log_message_with_task, "doing", clazz, "message").should == log_message_with_task(@model, "doing", clazz, "message")
     end
   end
 end

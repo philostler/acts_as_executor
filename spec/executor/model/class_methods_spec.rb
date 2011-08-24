@@ -6,6 +6,7 @@ describe ActsAsExecutor::Executor::Model::ClassMethods do
 
   describe "#acts_as_executor" do
     subject { Executor }
+    it { should include ActsAsExecutor::Common::InstanceSupportMethods }
     it { should include ActsAsExecutor::Executor::Model::InstanceMethods }
     it { should include ActsAsExecutor::Executor::Model::InstanceSupportMethods }
 

@@ -3,6 +3,7 @@ module ActsAsExecutor
     module Model
       module ClassMethods
         def acts_as_executor *arguments
+          send :include, ActsAsExecutor::Common::InstanceSupportMethods
           send :include, ActsAsExecutor::Executor::Model::InstanceMethods
           send :include, ActsAsExecutor::Executor::Model::InstanceSupportMethods
 

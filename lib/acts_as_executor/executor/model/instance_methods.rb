@@ -18,17 +18,17 @@ module ActsAsExecutor
 
         private
         def startup
-          log.debug log_message "startup triggered"
+          log.debug log_statement name, "startup triggered"
           self.executor = ActsAsExecutor::Executor::Factory.create max_tasks, schedulable
-          log.info log_message "started"
+          log.info log_statement name, "started"
 
           tasks.all
         end
 
-        def execute clazz, schedule = nil, start = nil, every = nil, units = nil
+        def execute clazz, task_id, schedule = nil, start = nil, every = nil, units = nil
           begin
             humanized_schedule = schedule ? schedule.gsub("_", " ") : "one time"
-            log.debug log_message_with_task "enqueuing", clazz, "for execution (" + humanized_schedule + ")"
+            log.debug log_message name, "preparing", task_id, clazz.class.name, "for execution (" + humanized_schedule + ")"
 
             if schedulable?
               units = Java::java.util.concurrent.TimeUnit.value_of(units.upcase)
@@ -45,38 +45,38 @@ module ActsAsExecutor
               executor.execute future
             end
 
-            log.info log_message_with_task "enqueued", clazz, "for execution (" + humanized_schedule + ")"
+            log.info log_message name, "enqueued", task_id, clazz.class.name
             future
           rescue Java::java.util.concurrent.RejectedExecutionException
-            log.warn log_message_with_task "enqueuing", clazz, "encountered a rejected execution exception"
+            log.warn log_message name, "preparing", task_id, clazz.class.name, "encountered a rejected execution exception"
           rescue Exception => exception
-            log.error log_message_with_task "enqueuing", clazz, "encountered an unexpected exception. " + exception
+            log.error log_message name, "preparing", task_id, clazz.class.name, "encountered an unexpected exception. " + exception
           end
         end
 
         def shutdown
-          log.debug log_message "shutdown triggered"
+          log.debug log_statement name, "shutdown triggered"
           begin
             executor.shutdown
           rescue Java::java.lang.SecurityException
-            log.warn log_message "shutdown encountered a security exception"
+            log.warn log_statement name, "shutdown encountered a security exception"
             forced_shutdown
           else
-            log.info log_message "shutdown"
+            log.info log_statement name, "shutdown"
           ensure
             self.executor = nil
           end
         end
 
         def forced_shutdown
-          log.debug log_message "forced shutdown triggered"
+          log.debug log_statement name, "forced shutdown triggered"
           begin
             executor.shutdown_now
           rescue Java::java.lang.SecurityException
-            log.error log_message "forced shutdown encountered a security exception"
-            log.fatal log_message "forced shutdown failure"
+            log.error log_statement name, "forced shutdown encountered a security exception"
+            log.fatal log_statement name, "forced shutdown failure"
           else
-            log.info log_message "forced shutdown"
+            log.info log_statement name, "forced shutdown"
           ensure
             self.executor = nil
           end

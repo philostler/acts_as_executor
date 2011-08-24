@@ -30,14 +30,6 @@ module ActsAsExecutor
         def log
           self.class.log
         end
-
-        def log_message message
-          "\"" + name + "\" executor " + message
-        end
-
-        def log_message_with_task doing, clazz, message
-          "\"" + name + "\" executor " + doing + " task \"" + clazz.class.name + "\" with arguments \"" + clazz.arguments.inspect + "\" " + message
-        end
       end
     end
   end

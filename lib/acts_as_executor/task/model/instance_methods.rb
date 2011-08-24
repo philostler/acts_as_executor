@@ -26,14 +26,14 @@ module ActsAsExecutor
         private
         def enqueue
           begin
-            executor.send(:log).debug log_message "instantiating", "for enqueuing"
+            executor.send(:log).debug log_message executor.name, "creating", id.to_s, clazz, arguments
 
             instance = instantiate clazz, arguments
 
-            self.future = executor.send(:execute, instance, schedule, start, every, units)
+            self.future = executor.send(:execute, instance, id.to_s, schedule, start, every, units)
             future.done_handler = method :done_handler
           rescue Exception => exception
-            executor.send(:log).error log_message "instantiating", "encountered an unexpected exception. " + exception
+            executor.send(:log).error log_message executor.name, "creating", id.to_s, clazz, "encountered an unexpected exception. " + exception
           end
         end
 
@@ -49,7 +49,7 @@ module ActsAsExecutor
         end
 
         def uncaught_exception_handler exception
-          executor.send(:log).error log_message "executing", "encountered an uncaught exception. " + exception
+          executor.send(:log).error log_message executor.name, "executing", id.to_s, clazz, "encountered an uncaught exception. " + exception
         end
 
         def cancel

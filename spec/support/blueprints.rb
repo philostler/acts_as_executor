@@ -1,3 +1,6 @@
+InstanceSupportMethods.blueprint do
+end
+
 Executor.blueprint do
   id        { "#{sn}" }
   name      { "name#{sn}" }

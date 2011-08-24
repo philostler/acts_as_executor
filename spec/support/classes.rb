@@ -10,6 +10,11 @@ class Logger
   def fatal message = nil, &block; end
 end
 
+# InstanceSupportMethods
+Object.const_set "InstanceSupportMethods", Class.new
+InstanceSupportMethods.send :extend, Machinist::Machinable
+InstanceSupportMethods.send :include, ActsAsExecutor::Common::InstanceSupportMethods
+
 # Executor
 Object.const_set "Executor", Class.new(ActiveRecord::Base)
 ActiveRecord::Schema.define do

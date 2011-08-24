@@ -26,10 +26,6 @@ module ActsAsExecutor
           end
           return false
         end
-
-        def log_message doing, message
-          "\"" + executor.name + "\" executor " + doing + " task \"" + clazz + "\" with arguments \"" + arguments.inspect + "\" " + message
-        end
       end
     end
   end
