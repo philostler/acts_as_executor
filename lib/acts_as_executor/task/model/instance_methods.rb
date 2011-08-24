@@ -45,6 +45,7 @@ module ActsAsExecutor
         end
 
         def done_handler
+          executor.send(:log).debug log_message executor.name, "completed", id.to_s, clazz
           destroy
         end
 

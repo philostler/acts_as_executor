@@ -14,7 +14,7 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
       future = double "Future"
       future.stub :done_handler=
 
-      @model.executor.send(:log).should_receive(:debug).with log_message(@model.executor.name, "creating", @model.id.to_s, @clazz.class.name, @model.arguments)
+      @model.executor.send(:log).should_receive(:debug).with log_message(@model.executor.name, "creating", @model.id.to_s, @model.clazz, @model.arguments)
       @model.should_receive(:instantiate).and_return @clazz
       @model.executor.should_receive(:execute).with(@clazz, @model.id.to_s, @model.schedule, @model.start, @model.every, @model.units).and_return future
 
@@ -28,7 +28,7 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
         exception = RuntimeError.new
 
         @model.should_receive(:instantiate).and_raise exception
-        @model.executor.send(:log).should_receive(:error).with log_message(@model.executor.name, "creating", @model.id.to_s, @clazz.class.name, "encountered an unexpected exception. " + exception)
+        @model.executor.send(:log).should_receive(:error).with log_message(@model.executor.name, "creating", @model.id.to_s, @model.clazz, "encountered an unexpected exception. " + exception)
 
         @model.send :enqueue
       end
@@ -46,6 +46,7 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
 
   describe "#done_handler" do
     it "should invoke destroy" do
+      @model.executor.send(:log).should_receive(:debug).with log_message(@model.executor.name, "completed", @model.id.to_s, @model.clazz)
       @model.should_receive :destroy
 
       @model.send :done_handler
@@ -58,7 +59,7 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
     it "should log exception" do
       exception = RuntimeError.new
 
-      @model.executor.send(:log).should_receive(:error).with log_message(@model.executor.name, "executing", @model.id.to_s, @clazz.class.name, "encountered an uncaught exception. " + exception)
+      @model.executor.send(:log).should_receive(:error).with log_message(@model.executor.name, "executing", @model.id.to_s, @model.clazz, "encountered an uncaught exception. " + exception)
 
       @model.send :uncaught_exception_handler, exception
     end
