@@ -54,7 +54,7 @@ Once you have an executor available, it's time to add some tasks. Do this like y
 
 ```ruby
 Executor.find_by_name("background").tasks.create(:clazz => "BackgroundTask",
-                                                 :arguments => { :data => "This is my data")
+                                                 :arguments => { :data => "This is my data"})
 ```
 
 The ```clazz``` attribute references a class that must...
