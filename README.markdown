@@ -2,11 +2,20 @@
 
 acts_as_executor seamlessly integrates Java’s Executor framework with JRuby on Rails, enabling an application to use executors in a familiar Rails’eque way.
 
+[RubyGems][ruby_gems] | [GitHub][github] | [Travis CI][travis_ci] | [RubyDoc][ruby_doc] | [Wiki][wiki]
+
+## Features
+* **Abstraction** from low-level executor type configuration
+* **ActiveRecord** interface so creating an executor or task is as simple is creating a record
+* **Automatic Task Setup** so you can concentrate on business logic and not task management
+* **Database Persisted Configuration** so executors can be managed through migrations and seeds
+* **Logging** of executor and task states to Rails or custom logger
+
 ## 1. Install
 ```ruby
 gem "acts_as_executor"
 ```
-...or for life on the edge, use the [master branch](https://github.com/philostler/acts_as_executor/tree/master) [![Build Status](https://secure.travis-ci.org/philostler/acts_as_executor.png)](http://travis-ci.org/philostler/acts_as_executor)
+...or for life on the edge, use the [master branch][github_master] [![Build Status][travis_ci_build_status]][travis_ci]
 
 ```ruby
 gem "acts_as_executor", :git => "git@github.com:philostler/acts_as_executor.git"
@@ -39,7 +48,7 @@ These can be created on the fly at runtime (be sure to save the record before yo
 
 Attributes ```max_tasks``` and ```schedulable``` exist on the executors model for task limiting and schedulable ability enabling. Check out the wiki documentation for details of how these work.
 
-[Using Executors](https://github.com/philostler/acts_as_executor/wiki)
+[Using Executors][wiki_using_executors]
 
 Once you have an executor available, it's time to add some tasks. Do this like you would any associated record.
 
@@ -70,4 +79,18 @@ Anything passed into the ```attributes``` hash will be available to the instance
 
 Attributes ```schedule```, ```start```, ```every``` and ```units``` exist on the tasks model for defining the type and periods for scheduling and their units. Check out the wiki documentation for details of how these work.
 
-[Using Tasks](https://github.com/philostler/acts_as_executor/wiki)
+[Using Tasks][wiki_using_tasks]
+
+## Compatibility
+* JRuby 1.6.x
+* Rails 3.x
+
+[github]: https://github.com/philostler/acts_as_executor
+[github_master]: https://github.com/philostler/acts_as_executor/tree/master
+[ruby_doc]: http://rubydoc.info/github/philostler/acts_as_executor/master/frames
+[ruby_gems]: http://rubygems.org/gems/acts_as_executor
+[travis_ci]: http://travis-ci.org/philostler/acts_as_executor
+[travis_ci_build_status]: https://secure.travis-ci.org/philostler/acts_as_executor.png
+[wiki]: https://github.com/philostler/acts_as_executor/wiki
+[wiki_using_executors]: https://github.com/philostler/acts_as_executor/wiki/Using-Executors
+[wiki_using_tasks]: https://github.com/philostler/acts_as_executor/wiki/Using-Tasks
