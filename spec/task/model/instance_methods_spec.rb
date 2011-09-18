@@ -28,7 +28,7 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
         exception = RuntimeError.new
 
         @model.should_receive(:instantiate).and_raise exception
-        @model.executor.send(:log).should_receive(:error).with log_message(@model.executor.name, "creating", @model.id.to_s, @model.clazz, "encountered an unexpected exception. " + exception)
+        @model.executor.send(:log).should_receive(:error).with log_message(@model.executor.name, "creating", @model.id.to_s, @model.clazz, "encountered an unexpected exception. " + exception.to_s)
 
         @model.send :enqueue
       end
@@ -59,7 +59,7 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
     it "should log exception" do
       exception = RuntimeError.new
 
-      @model.executor.send(:log).should_receive(:error).with log_message(@model.executor.name, "executing", @model.id.to_s, @model.clazz, "encountered an uncaught exception. " + exception)
+      @model.executor.send(:log).should_receive(:error).with log_message(@model.executor.name, "executing", @model.id.to_s, @model.clazz, "encountered an uncaught exception. " + exception.to_s)
 
       @model.send :uncaught_exception_handler, exception
     end

@@ -33,7 +33,7 @@ module ActsAsExecutor
             self.future = executor.send(:execute, instance, id.to_s, schedule, start, every, units)
             future.done_handler = method :done_handler
           rescue Exception => exception
-            executor.send(:log).error log_message executor.name, "creating", id.to_s, clazz, "encountered an unexpected exception. " + exception
+            executor.send(:log).error log_message executor.name, "creating", id.to_s, clazz, "encountered an unexpected exception. " + exception.to_s
           end
         end
 
@@ -50,7 +50,7 @@ module ActsAsExecutor
         end
 
         def uncaught_exception_handler exception
-          executor.send(:log).error log_message executor.name, "executing", id.to_s, clazz, "encountered an uncaught exception. " + exception
+          executor.send(:log).error log_message executor.name, "executing", id.to_s, clazz, "encountered an uncaught exception. " + exception.to_s
         end
 
         def cancel

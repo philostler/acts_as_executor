@@ -50,7 +50,7 @@ module ActsAsExecutor
           rescue Java::java.util.concurrent.RejectedExecutionException
             log.warn log_message name, "preparing", task_id, clazz.class.name, "encountered a rejected execution exception"
           rescue Exception => exception
-            log.error log_message name, "preparing", task_id, clazz.class.name, "encountered an unexpected exception. " + exception
+            log.error log_message name, "preparing", task_id, clazz.class.name, "encountered an unexpected exception. " + exception.to_s
           end
         end
 
