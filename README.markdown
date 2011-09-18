@@ -82,7 +82,7 @@ Attributes ```schedule```, ```start```, ```every``` and ```units``` exist on the
 [Using Tasks][wiki_using_tasks]
 
 ## Compatibility
-* JRuby 1.6.x
+* JRuby 1.6.x (1.8.7 and 1.9.2 modes)
 * Rails 3.x
 
 [github]: https://github.com/philostler/acts_as_executor
