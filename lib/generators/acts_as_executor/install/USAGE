@@ -1,0 +1,8 @@
+Description:
+  Creates models and migrations for executors and executor tasks.
+  Pass the executor name, either CamelCased or under_scored, as an argument.
+
+  Task model name will be executor name with "Task" appended.
+
+Example:
+  "rails g acts_as_executor:install Executor"

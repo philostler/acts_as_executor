@@ -1,0 +1,6 @@
+Description:
+  Creates a model for an executor task clazz.
+  Pass the task name, either CamelCased or under_scored, as an argument.
+
+Example:
+  "rails g acts_as_executor:task Task"
