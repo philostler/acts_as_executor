@@ -13,12 +13,12 @@ describe ActsAsExecutor::Common::InstanceSupportMethods do
 
   describe "#log_message" do
     it "should return a string" do
-      @model.send(:log_message, "name", "doing", 1.to_s, "clazz", "message").should == log_message("name", "doing", 1.to_s, "clazz", "message")
+      @model.send(:log_message, "name", "doing", 1.to_s, "executable", "message").should == log_message("name", "doing", 1.to_s, "executable", "message")
     end
 
     context "when message is a hash" do
       it "should return a string" do
-        @model.send(:log_message, "name", "doing", 1.to_s, "clazz", {:attribute_one => "attribute_one_value", :attribute_two => "attribute_two_value"}).should == log_message("name", "doing", 1.to_s, "clazz", {:attribute_one => "attribute_one_value", :attribute_two => "attribute_two_value"})
+        @model.send(:log_message, "name", "doing", 1.to_s, "executable", {:attribute_one => "attribute_one_value", :attribute_two => "attribute_two_value"}).should == log_message("name", "doing", 1.to_s, "executable", {:attribute_one => "attribute_one_value", :attribute_two => "attribute_two_value"})
       end
     end
   end

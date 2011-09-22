@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe ActsAsExecutor::Common::FutureTask do
-  before(:each) { @model = ActsAsExecutor::Common::FutureTask.new Clazz.make, nil }
+  before(:each) { @model = ActsAsExecutor::Common::FutureTask.new Executable.make, nil }
 
   it { @model.should be_a Java::java.util.concurrent.FutureTask }
 
