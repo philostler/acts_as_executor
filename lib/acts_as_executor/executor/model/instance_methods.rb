@@ -25,32 +25,32 @@ module ActsAsExecutor
           tasks.all
         end
 
-        def execute clazz, task_id, schedule = nil, start = nil, every = nil, units = nil
+        def execute instance, task_id, schedule = nil, start = nil, every = nil, units = nil
           begin
             humanized_schedule = schedule ? schedule.gsub("_", " ") : "one time"
-            log.debug log_message name, "preparing", task_id, clazz.class.name, "for execution (" + humanized_schedule + ")"
+            log.debug log_message name, "preparing", task_id, instance.class.name, "for execution (" + humanized_schedule + ")"
 
             if schedulable?
               units = Java::java.util.concurrent.TimeUnit.value_of(units.upcase)
               case schedule
                 when ActsAsExecutor::Task::Schedules::ONE_SHOT
-                  future = executor.schedule clazz, start, units
+                  future = executor.schedule instance, start, units
                 when ActsAsExecutor::Task::Schedules::FIXED_DELAY
-                  future = executor.schedule_with_fixed_delay clazz, start, every, units
+                  future = executor.schedule_with_fixed_delay instance, start, every, units
                 when ActsAsExecutor::Task::Schedules::FIXED_RATE
-                  future = executor.schedule_at_fixed_rate clazz, start, every, units
+                  future = executor.schedule_at_fixed_rate instance, start, every, units
               end
             else
-              future = ActsAsExecutor::Common::FutureTask.new clazz, nil
+              future = ActsAsExecutor::Common::FutureTask.new instance, nil
               executor.execute future
             end
 
-            log.info log_message name, "enqueued", task_id, clazz.class.name
+            log.info log_message name, "enqueued", task_id, instance.class.name
             future
           rescue Java::java.util.concurrent.RejectedExecutionException
-            log.warn log_message name, "preparing", task_id, clazz.class.name, "encountered a rejected execution exception"
+            log.warn log_message name, "preparing", task_id, instance.class.name, "encountered a rejected execution exception"
           rescue Exception => exception
-            log.error log_message name, "preparing", task_id, clazz.class.name, "encountered an unexpected exception. " + exception.to_s
+            log.error log_message name, "preparing", task_id, instance.class.name, "encountered an unexpected exception. " + exception.to_s
           end
         end
 
