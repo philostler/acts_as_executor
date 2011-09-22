@@ -6,9 +6,9 @@ module ActsAsExecutor
         "\"" + executor_name + "\" " + statement
       end
 
-      def log_message executor_name, doing, task_id, clazz_name, message = ""
+      def log_message executor_name, doing, task_id, executable_name, message = ""
         if message.kind_of? Hash then message = "with \"" + message.inspect + "\"" end 
-        "\"" + executor_name + "\" " + doing + " \"" + task_id + "#" + clazz_name + "\" " + message
+        "\"" + executor_name + "\" " + doing + " \"" + task_id + "#" + executable_name + "\" " + message
       end
     end
   end
