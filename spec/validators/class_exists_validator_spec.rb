@@ -8,7 +8,7 @@ describe ClassExistsValidator do
   describe "#validate_each" do
     context "when class does not exist" do
       it "should set error message" do
-        attribute = "clazz"
+        attribute = "executable"
         record = double "Record"
         record.stub(:errors).and_return( { attribute => [] } )
 
