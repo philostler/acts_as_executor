@@ -12,7 +12,13 @@ Gem::Specification.new do |s|
   s.summary     = %q{Java Executor framework integration for Rails}
   s.description = %q{Seamlessly integrates Java's Executor framework with JRuby on Rails}
 
-  s.files         = Dir["**/*.rb"] + Dir["*.rdoc"] + Dir["LICENSE"] + Dir["*.gemspec"]
+  s.files = Dir[".rspec"] +
+            Dir["acts_as_executor.gemspec"] +
+            Dir["Gemfile"] +
+            Dir["LICENSE"] +
+            Dir["Rakefile"] +
+            Dir["README.markdown"] +
+            Dir["**/*.rb"]
   s.require_paths = ["lib"]
 
   s.add_dependency "activemodel", ">= 3.0"
