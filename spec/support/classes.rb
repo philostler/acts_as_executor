@@ -39,7 +39,7 @@ ActiveRecord::Schema.define do
 
   create_table :executor_tasks, :force => true do |t|
     t.integer  :executor_id
-    t.string   :clazz
+    t.string   :executable
     t.string   :arguments
     t.string   :schedule
     t.integer  :start
@@ -49,7 +49,6 @@ ActiveRecord::Schema.define do
 end
 ExecutorTask.acts_as_executor_task
 
-# Clazz
-Object.const_set "Clazz", Class.new
-Clazz.send :extend, Machinist::Machinable
-Clazz.send :include, ActsAsExecutor::Task::Clazz
+# Executable
+Object.const_set "Executable", Class.new(ActsAsExecutor::Task::Executable)
+Executable.send :extend, Machinist::Machinable
