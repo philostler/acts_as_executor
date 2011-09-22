@@ -19,16 +19,16 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
   end
 
   describe "#execute" do
-    before(:each) { @clazz = Clazz.make }
+    before(:each) { @executable = Executable.make }
     after(:each) { @model.send(:executor).shutdown }
 
     it "should execute a task" do
       @model.send :startup
 
-      @model.send(:log).should_receive(:debug).with log_message(@model.name, "preparing", 1.to_s, @clazz.class.name, "for execution (one time)")
-      @model.send(:log).should_receive(:info).with log_message(@model.name, "enqueued", 1.to_s, @clazz.class.name)
+      @model.send(:log).should_receive(:debug).with log_message(@model.name, "preparing", 1.to_s, @executable.class.name, "for execution (one time)")
+      @model.send(:log).should_receive(:info).with log_message(@model.name, "enqueued", 1.to_s, @executable.class.name)
 
-      future = @model.send :execute, @clazz, 1.to_s
+      future = @model.send :execute, @executable, 1.to_s
       future.get
 
       future.is_done.should be_true
@@ -38,10 +38,10 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
       @model = Executor.make :max_tasks => 1, :schedulable => true
       @model.send :startup
 
-      @model.send(:log).should_receive(:debug).with log_message(@model.name, "preparing", 1.to_s, @clazz.class.name, "for execution (one shot)")
-      @model.send(:log).should_receive(:info).with log_message(@model.name, "enqueued", 1.to_s, @clazz.class.name)
+      @model.send(:log).should_receive(:debug).with log_message(@model.name, "preparing", 1.to_s, @executable.class.name, "for execution (one shot)")
+      @model.send(:log).should_receive(:info).with log_message(@model.name, "enqueued", 1.to_s, @executable.class.name)
 
-      future = @model.send :execute, @clazz, 1.to_s, ActsAsExecutor::Task::Schedules::ONE_SHOT, 0, nil, ActsAsExecutor::Common::Units::SECONDS
+      future = @model.send :execute, @executable, 1.to_s, ActsAsExecutor::Task::Schedules::ONE_SHOT, 0, nil, ActsAsExecutor::Common::Units::SECONDS
       future.get
 
       future.is_done.should be_true
@@ -51,10 +51,10 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
       @model = Executor.make :max_tasks => 1, :schedulable => true
       @model.send :startup
 
-      @model.send(:log).should_receive(:debug).with log_message(@model.name, "preparing", 1.to_s, @clazz.class.name, "for execution (fixed delay)")
-      @model.send(:log).should_receive(:info).with log_message(@model.name, "enqueued", 1.to_s, @clazz.class.name)
+      @model.send(:log).should_receive(:debug).with log_message(@model.name, "preparing", 1.to_s, @executable.class.name, "for execution (fixed delay)")
+      @model.send(:log).should_receive(:info).with log_message(@model.name, "enqueued", 1.to_s, @executable.class.name)
 
-      future = @model.send :execute, @clazz, 1.to_s, ActsAsExecutor::Task::Schedules::FIXED_DELAY, 0, 2, ActsAsExecutor::Common::Units::SECONDS
+      future = @model.send :execute, @executable, 1.to_s, ActsAsExecutor::Task::Schedules::FIXED_DELAY, 0, 2, ActsAsExecutor::Common::Units::SECONDS
 
       future.should_not be_nil
     end
@@ -63,10 +63,10 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
       @model = Executor.make :max_tasks => 1, :schedulable => true
       @model.send :startup
 
-      @model.send(:log).should_receive(:debug).with log_message(@model.name, "preparing", 1.to_s, @clazz.class.name, "for execution (fixed rate)")
-      @model.send(:log).should_receive(:info).with log_message(@model.name, "enqueued", 1.to_s, @clazz.class.name)
+      @model.send(:log).should_receive(:debug).with log_message(@model.name, "preparing", 1.to_s, @executable.class.name, "for execution (fixed rate)")
+      @model.send(:log).should_receive(:info).with log_message(@model.name, "enqueued", 1.to_s, @executable.class.name)
 
-      future = @model.send :execute, @clazz, 1.to_s, ActsAsExecutor::Task::Schedules::FIXED_RATE, 0, 2, ActsAsExecutor::Common::Units::SECONDS
+      future = @model.send :execute, @executable, 1.to_s, ActsAsExecutor::Task::Schedules::FIXED_RATE, 0, 2, ActsAsExecutor::Common::Units::SECONDS
 
       future.should_not be_nil
     end
@@ -75,11 +75,11 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
       it "should log exception" do
         @model.send :startup
 
-        @model.send(:log).should_receive(:debug).with log_message(@model.name, "preparing", 1.to_s, @clazz.class.name, "for execution (one time)")
+        @model.send(:log).should_receive(:debug).with log_message(@model.name, "preparing", 1.to_s, @executable.class.name, "for execution (one time)")
         @model.send(:executor).should_receive(:execute).and_raise Java::java.util.concurrent.RejectedExecutionException.new
-        @model.send(:log).should_receive(:warn).with log_message(@model.name, "preparing", 1.to_s, @clazz.class.name, "encountered a rejected execution exception")
+        @model.send(:log).should_receive(:warn).with log_message(@model.name, "preparing", 1.to_s, @executable.class.name, "encountered a rejected execution exception")
 
-        @model.send :execute, @clazz, 1.to_s
+        @model.send :execute, @executable, 1.to_s
       end
     end
 
@@ -88,10 +88,10 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
         @model = Executor.make :max_tasks => 1, :schedulable => true
         @model.send :startup
 
-        @model.send(:log).should_receive(:debug).with log_message(@model.name, "preparing", 1.to_s, @clazz.class.name, "for execution (one time)")
-        @model.send(:log).should_receive(:error).with log_message(@model.name, "preparing", 1.to_s, @clazz.class.name, "encountered an unexpected exception. java.lang.IllegalArgumentException: No enum const class java.util.concurrent.TimeUnit.RANDOM")
+        @model.send(:log).should_receive(:debug).with log_message(@model.name, "preparing", 1.to_s, @executable.class.name, "for execution (one time)")
+        @model.send(:log).should_receive(:error).with log_message(@model.name, "preparing", 1.to_s, @executable.class.name, "encountered an unexpected exception. java.lang.IllegalArgumentException: No enum const class java.util.concurrent.TimeUnit.RANDOM")
 
-        @model.send :execute, @clazz, 1.to_s, nil, nil, nil, "random"
+        @model.send :execute, @executable, 1.to_s, nil, nil, nil, "random"
       end
     end
   end

@@ -6,7 +6,7 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
   it { @model.should_not allow_public_access_for_methods :enqueue, :instantiate, :cancel, :done_handler, :uncaught_exception_handler }
 
   describe "#enqueue" do
-    before(:each) { @clazz = Clazz.make }
+    before(:each) { @executable = Executable.make }
 
     it "should enqueue task" do
       @model.send(:future).should be_nil
@@ -14,9 +14,9 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
       future = double "Future"
       future.stub :done_handler=
 
-      @model.executor.send(:log).should_receive(:debug).with log_message(@model.executor.name, "creating", @model.id.to_s, @model.clazz, @model.arguments)
-      @model.should_receive(:instantiate).and_return @clazz
-      @model.executor.should_receive(:execute).with(@clazz, @model.id.to_s, @model.schedule, @model.start, @model.every, @model.units).and_return future
+      @model.executor.send(:log).should_receive(:debug).with log_message(@model.executor.name, "creating", @model.id.to_s, @model.executable, @model.arguments)
+      @model.should_receive(:instantiate).and_return @executable
+      @model.executor.should_receive(:execute).with(@executable, @model.id.to_s, @model.schedule, @model.start, @model.every, @model.units).and_return future
 
       @model.send :enqueue
 
@@ -28,7 +28,7 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
         exception = RuntimeError.new
 
         @model.should_receive(:instantiate).and_raise exception
-        @model.executor.send(:log).should_receive(:error).with log_message(@model.executor.name, "creating", @model.id.to_s, @model.clazz, "encountered an unexpected exception. " + exception.to_s)
+        @model.executor.send(:log).should_receive(:error).with log_message(@model.executor.name, "creating", @model.id.to_s, @model.executable, "encountered an unexpected exception. " + exception.to_s)
 
         @model.send :enqueue
       end
@@ -37,16 +37,16 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
 
   describe "#instantiate" do
     it "should return an instance" do
-      instance = @model.send :instantiate, @model.clazz, @model.arguments
+      instance = @model.send :instantiate, @model.executable, @model.arguments
 
-      instance.class.name.should == @model.clazz
+      instance.class.name.should == @model.executable
       instance.arguments.should == @model.arguments
     end
   end
 
   describe "#done_handler" do
     it "should invoke destroy" do
-      @model.executor.send(:log).should_receive(:debug).with log_message(@model.executor.name, "completed", @model.id.to_s, @model.clazz)
+      @model.executor.send(:log).should_receive(:debug).with log_message(@model.executor.name, "completed", @model.id.to_s, @model.executable)
       @model.should_receive :destroy
 
       @model.send :done_handler
@@ -54,12 +54,12 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
   end
 
   describe "#uncaught_exception_handler" do
-    before(:each) { @clazz = Clazz.make }
+    before(:each) { @executable = Executable.make }
 
     it "should log exception" do
       exception = RuntimeError.new
 
-      @model.executor.send(:log).should_receive(:error).with log_message(@model.executor.name, "executing", @model.id.to_s, @model.clazz, "encountered an uncaught exception. " + exception.to_s)
+      @model.executor.send(:log).should_receive(:error).with log_message(@model.executor.name, "executing", @model.id.to_s, @model.executable, "encountered an uncaught exception. " + exception.to_s)
 
       @model.send :uncaught_exception_handler, exception
     end
