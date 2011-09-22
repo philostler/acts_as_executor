@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe ActsAsExecutor do
-	it { ActsAsExecutor::VERSION.should == "1.0.0" }
+	it { ActsAsExecutor::VERSION.should == "1.0.0.rc2" }
 
   describe "#rails_initialized?" do
     context "when rails initialized" do
