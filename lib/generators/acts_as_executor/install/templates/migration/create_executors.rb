@@ -9,7 +9,7 @@ class Create<%= class_name.pluralize %> < ActiveRecord::Migration
 
     create_table :<%= singular_table_name %>_tasks do |t|
       t.integer  :executor_id
-      t.string   :clazz
+      t.string   :executable
       t.string   :arguments
       t.string   :schedule
       t.integer  :start
