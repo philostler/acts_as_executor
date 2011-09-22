@@ -1,0 +1,42 @@
+require "spec_helper"
+
+describe ActsAsExecutor::Task::Executable do
+  before(:each) { @model = Executable.make }
+
+  it { @model.should be_a Java::java.lang.Runnable }
+  it { @model.should_not allow_public_access_for_methods :run }
+
+  describe "#run" do
+    it "should invoke execute" do
+      @model.should_receive :execute
+
+      @model.send :run
+    end
+    it "should create accessor for each arguments member" do
+      @model.send :run
+
+      @model.arguments.each_pair do |key, value|
+        @model.should respond_to key
+        @model.send(key).should == value
+      end
+    end
+
+    context "when any exception is thrown" do
+      context "when uncaught exception handler exists" do
+        it "should invoke handler" do
+          handler = double "Handler"
+          handler.stub :uncaught_exception_handler
+          @model.uncaught_exception_handler = handler.method :uncaught_exception_handler
+
+          exception = RuntimeError.new
+
+          @model.should_receive(:execute).and_raise exception
+
+          handler.should_receive(:uncaught_exception_handler).with exception
+
+          @model.send :run
+        end
+      end
+    end
+  end
+end
