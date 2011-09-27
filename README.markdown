@@ -1,6 +1,6 @@
 # acts_as_executor
 
-acts_as_executor seamlessly integrates Java’s Executor framework with JRuby on Rails, enabling an application to use executors in a familiar Rails’eque way.
+acts_as_executor seamlessly integrates Java’s Executor framework with Ruby on Rails, enabling an application to use executors in a familiar Rails’eque way.
 
 [RubyGems][ruby_gems] | [GitHub][github] | [Travis CI][travis_ci] | [RubyDoc][ruby_doc] | [Wiki][wiki]
 

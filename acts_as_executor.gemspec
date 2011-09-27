@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email       = ["philostler@gmail.com"]
   s.homepage    = "https://github.com/philostler/acts_as_executor"
   s.summary     = %q{Java Executor framework integration for Rails}
-  s.description = %q{Seamlessly integrates Java's Executor framework with JRuby on Rails}
+  s.description = %q{Seamlessly integrates Java's Executor framework with Ruby on Rails}
 
   s.files = Dir[".rspec"] +
             Dir["acts_as_executor.gemspec"] +
