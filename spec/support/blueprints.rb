@@ -2,9 +2,10 @@ InstanceSupportMethods.blueprint do
 end
 
 Executor.blueprint do
-  id        { "#{sn}" }
-  name      { "name#{sn}" }
-  max_tasks { 1 }
+  id          { "#{sn}" }
+  name        { "name#{sn}" }
+  max_tasks   { 1 }
+  schedulable { false }
 end
 
 ExecutorTask.blueprint do
