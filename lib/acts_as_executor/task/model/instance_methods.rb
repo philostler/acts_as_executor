@@ -31,8 +31,8 @@ module ActsAsExecutor
             instance = instantiate executable, arguments
 
             self.future = executor.send(:execute, instance, id.to_s, schedule, start, every, units)
-            future.done_handler = method :done_handler
-          rescue Exception => exception
+            future.done_handler = method :done_handler unless executor.send(:schedulable?)
+          rescue RuntimeError => exception
             executor.send(:log).error log_message executor.name, "creating", id.to_s, executable, "encountered an unexpected exception. " + exception.to_s
           end
         end
