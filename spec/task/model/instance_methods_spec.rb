@@ -23,7 +23,33 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
       @model.send(:future).should == future
     end
 
-    context "when any exception is thrown" do
+    it "should set done handler on future" do
+      future = double "Future"
+      future.stub :done_handler=
+
+      @model.should_receive(:instantiate).and_return @executable
+      @model.executor.should_receive(:execute).with(@executable, @model.id.to_s, @model.schedule, @model.start, @model.every, @model.units).and_return future
+      future.should_receive(:done_handler=).with @model.method(:done_handler)
+
+      @model.send :enqueue
+    end
+
+    context "when executor is schedulable" do
+      before(:each) { @model = ExecutorTask.make(:executor => Executor.make(:schedulable => true)) }
+
+      it "should not set done handler on future" do
+        future = double "Future"
+        future.stub :done_handler=
+
+        @model.should_receive(:instantiate).and_return @executable
+        @model.executor.should_receive(:execute).with(@executable, @model.id.to_s, @model.schedule, @model.start, @model.every, @model.units).and_return future
+        future.should_not_receive :done_handler=
+
+        @model.send :enqueue
+      end
+    end
+
+    context "when runtime exception is thrown" do
       it "should log exception" do
         exception = RuntimeError.new
 
