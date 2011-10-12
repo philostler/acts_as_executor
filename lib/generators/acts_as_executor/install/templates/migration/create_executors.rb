@@ -14,7 +14,6 @@ class Create<%= class_name.pluralize %> < ActiveRecord::Migration
       t.string   :schedule
       t.integer  :start
       t.integer  :every
-      t.string   :units
       t.timestamps
     end
   end
