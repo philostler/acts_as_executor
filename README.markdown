@@ -78,7 +78,7 @@ rails g acts_as_executor:executable Executable
 
 Anything passed into the ```attributes``` hash will be available to the instance when it is executed.
 
-Attributes ```schedule```, ```start```, ```every``` and ```units``` exist on the tasks model for defining the type and periods for scheduling and their units. Check out the wiki documentation for details of how these work.
+Attributes ```schedule```, ```start``` and ```every``` exist on the tasks model for defining the type and periods for scheduling. Check out the wiki documentation for details of how these work.
 
 [Using Tasks][wiki_using_tasks]
 
