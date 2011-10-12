@@ -41,7 +41,7 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
       @model.send(:log).should_receive(:debug).with log_message(@model.name, "preparing", 1.to_s, @executable.class.name, "for execution (one shot)")
       @model.send(:log).should_receive(:info).with log_message(@model.name, "enqueued", 1.to_s, @executable.class.name)
 
-      future = @model.send :execute, @executable, 1.to_s, ActsAsExecutor::Task::Schedules::ONE_SHOT, 0, nil, ActsAsExecutor::Common::Units::SECONDS
+      future = @model.send :execute, @executable, 1.to_s, ActsAsExecutor::Task::Schedules::ONE_SHOT, 0, nil
       future.get
 
       future.is_done.should be_true
@@ -54,7 +54,7 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
       @model.send(:log).should_receive(:debug).with log_message(@model.name, "preparing", 1.to_s, @executable.class.name, "for execution (fixed delay)")
       @model.send(:log).should_receive(:info).with log_message(@model.name, "enqueued", 1.to_s, @executable.class.name)
 
-      future = @model.send :execute, @executable, 1.to_s, ActsAsExecutor::Task::Schedules::FIXED_DELAY, 0, 2, ActsAsExecutor::Common::Units::SECONDS
+      future = @model.send :execute, @executable, 1.to_s, ActsAsExecutor::Task::Schedules::FIXED_DELAY, 0, 2
 
       future.should_not be_nil
     end
@@ -66,7 +66,7 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
       @model.send(:log).should_receive(:debug).with log_message(@model.name, "preparing", 1.to_s, @executable.class.name, "for execution (fixed rate)")
       @model.send(:log).should_receive(:info).with log_message(@model.name, "enqueued", 1.to_s, @executable.class.name)
 
-      future = @model.send :execute, @executable, 1.to_s, ActsAsExecutor::Task::Schedules::FIXED_RATE, 0, 2, ActsAsExecutor::Common::Units::SECONDS
+      future = @model.send :execute, @executable, 1.to_s, ActsAsExecutor::Task::Schedules::FIXED_RATE, 0, 2
 
       future.should_not be_nil
     end
@@ -85,13 +85,13 @@ describe ActsAsExecutor::Executor::Model::InstanceMethods do
 
     context "when any other exception is thrown" do
       it "should log exception" do
-        @model = Executor.make :max_tasks => 1, :schedulable => true
         @model.send :startup
 
         @model.send(:log).should_receive(:debug).with log_message(@model.name, "preparing", 1.to_s, @executable.class.name, "for execution (one time)")
-        @model.send(:log).should_receive(:error).with log_message(@model.name, "preparing", 1.to_s, @executable.class.name, "encountered an unexpected exception. java.lang.IllegalArgumentException: No enum const class java.util.concurrent.TimeUnit.RANDOM")
+        @model.send(:executor).should_receive(:execute).and_raise RuntimeError.new
+        @model.send(:log).should_receive(:error).with log_message(@model.name, "preparing", 1.to_s, @executable.class.name, "encountered an unexpected exception. RuntimeError")
 
-        @model.send :execute, @executable, 1.to_s, nil, nil, nil, "random"
+        @model.send :execute, @executable, 1.to_s
       end
     end
   end

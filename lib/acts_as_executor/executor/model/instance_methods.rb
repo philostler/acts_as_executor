@@ -26,13 +26,13 @@ module ActsAsExecutor
           tasks.all
         end
 
-        def execute instance, task_id, schedule = nil, start = nil, every = nil, units = nil
+        def execute instance, task_id, schedule = nil, start = nil, every = nil
           begin
             humanized_schedule = schedule ? schedule.gsub("_", " ") : "one time"
             log.debug log_message name, "preparing", task_id, instance.class.name, "for execution (" + humanized_schedule + ")"
 
             if schedulable?
-              units = Java::java.util.concurrent.TimeUnit.value_of(units.upcase)
+              units = Java::java.util.concurrent.TimeUnit::SECONDS
               case schedule
                 when ActsAsExecutor::Task::Schedules::ONE_SHOT
                   future = executor.schedule instance, start, units
