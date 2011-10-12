@@ -11,9 +11,9 @@ class Create<%= class_name.pluralize %> < ActiveRecord::Migration
       t.integer  :executor_id
       t.string   :executable
       t.string   :arguments
-      t.string   :schedule
       t.integer  :start
       t.integer  :every
+      t.boolean  :every_strict
       t.timestamps
     end
   end
