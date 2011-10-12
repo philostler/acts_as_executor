@@ -2,8 +2,7 @@ class Create<%= class_name.pluralize %> < ActiveRecord::Migration
   def self.up
     create_table :<%= table_name %> do |t|
       t.string   :name
-      t.integer  :max_tasks
-      t.boolean  :schedulable
+      t.integer  :limit
       t.timestamps
     end
 
