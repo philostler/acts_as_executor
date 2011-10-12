@@ -13,7 +13,6 @@ require "acts_as_executor/executor/model/instance_methods"
 require "acts_as_executor/executor/model/instance_support_methods"
 
 require "acts_as_executor/task/executable"
-require "acts_as_executor/task/schedules"
 
 require "acts_as_executor/task/model/class_methods"
 require "acts_as_executor/task/model/instance_methods"
