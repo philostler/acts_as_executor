@@ -16,7 +16,7 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
 
       @model.executor.send(:log).should_receive(:debug).with log_message(@model.executor.name, "creating", @model.id.to_s, @model.executable, @model.arguments)
       @model.should_receive(:instantiate).and_return @executable
-      @model.executor.should_receive(:execute).with(@executable, @model.id.to_s, @model.schedule, @model.start, @model.every, @model.units).and_return future
+      @model.executor.should_receive(:execute).with(@executable, @model.id.to_s, @model.schedule, @model.start, @model.every).and_return future
 
       @model.send :enqueue
 
@@ -28,7 +28,7 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
       future.stub :done_handler=
 
       @model.should_receive(:instantiate).and_return @executable
-      @model.executor.should_receive(:execute).with(@executable, @model.id.to_s, @model.schedule, @model.start, @model.every, @model.units).and_return future
+      @model.executor.should_receive(:execute).with(@executable, @model.id.to_s, @model.schedule, @model.start, @model.every).and_return future
       future.should_receive(:done_handler=).with @model.method(:done_handler)
 
       @model.send :enqueue
@@ -42,7 +42,7 @@ describe ActsAsExecutor::Task::Model::InstanceMethods do
         future.stub :done_handler=
 
         @model.should_receive(:instantiate).and_return @executable
-        @model.executor.should_receive(:execute).with(@executable, @model.id.to_s, @model.schedule, @model.start, @model.every, @model.units).and_return future
+        @model.executor.should_receive(:execute).with(@executable, @model.id.to_s, @model.schedule, @model.start, @model.every).and_return future
         future.should_not_receive :done_handler=
 
         @model.send :enqueue

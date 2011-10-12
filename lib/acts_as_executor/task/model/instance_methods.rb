@@ -20,7 +20,6 @@ module ActsAsExecutor
           base.validates :schedule, :inclusion => { :in => ActsAsExecutor::Task::Schedules::ALL }, :if => "executor and executor.schedulable?"
           base.validates :start, :numericality => { :only_integer => true, :greater_than_or_equal_to => 0 }, :if => "executor and executor.schedulable?"
           base.validates :every, :numericality => { :only_integer => true, :greater_than_or_equal_to => 1 }, :if => "executor and executor.schedulable? and schedule != ActsAsExecutor::Task::Schedules::ONE_SHOT"
-          base.validates :units, :inclusion => { :in => ActsAsExecutor::Common::Units::ALL }, :if => "executor and executor.schedulable?"
         end
 
         private
@@ -30,7 +29,7 @@ module ActsAsExecutor
 
             instance = instantiate executable, arguments
 
-            self.future = executor.send(:execute, instance, id.to_s, schedule, start, every, units)
+            self.future = executor.send(:execute, instance, id.to_s, schedule, start, every)
             future.done_handler = method :done_handler unless executor.send(:schedulable?)
           rescue RuntimeError => exception
             executor.send(:log).error log_message executor.name, "creating", id.to_s, executable, "encountered an unexpected exception. " + exception.to_s
