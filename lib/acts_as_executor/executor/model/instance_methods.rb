@@ -13,14 +13,13 @@ module ActsAsExecutor
 
           # Validations
           base.validates :name, :presence => true, :uniqueness => true
-          base.validates :max_tasks, :presence => true, :if => :schedulable?
-          base.validates :max_tasks, :numericality => { :only_integer => true, :greater_than_or_equal_to => 1 }, :allow_nil => true
+          base.validates :limit, :numericality => { :only_integer => true, :greater_than_or_equal_to => 1 }, :allow_nil => true
         end
 
         private
         def startup
           log.debug log_statement name, "startup triggered"
-          self.executor = ActsAsExecutor::Executor::Factory.create max_tasks, schedulable
+          self.executor = ActsAsExecutor::Executor::Factory.create limit
           log.info log_statement name, "started"
 
           tasks.all
