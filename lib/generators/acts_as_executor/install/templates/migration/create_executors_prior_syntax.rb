@@ -1,5 +1,5 @@
 class Create<%= class_name.pluralize %> < ActiveRecord::Migration
-  def change
+  def self.up
     create_table :<%= table_name %> do |t|
       t.string   :name
       t.integer  :limit
@@ -16,5 +16,10 @@ class Create<%= class_name.pluralize %> < ActiveRecord::Migration
       t.datetime :completed_at
       t.timestamps
     end
+  end
+
+  def self.down
+    drop_table :<%= table_name %>
+    drop_table :<%= singular_table_name %>_tasks
   end
 end

@@ -10,7 +10,11 @@ module ActsAsExecutor
     end
 
     def migration
-      migration_template File.join("migration", "create_executors.rb"), File.join("db", "migrate", "create_" + table_name + ".rb")
+      if Rails::VERSION::STRING.to_f >= 3.1
+        migration_template File.join("migration", "create_executors.rb"), File.join("db", "migrate", "create_" + table_name + ".rb")
+      else
+        migration_template File.join("migration", "create_executors_prior_syntax.rb"), File.join("db", "migrate", "create_" + table_name + ".rb")
+      end
     end
 
     def self.next_migration_number dirname
