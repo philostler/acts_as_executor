@@ -1,6 +1,0 @@
-Description:
-  Creates an executable class for an executor task.
-  Pass the executable name, either CamelCased or under_scored, as an argument.
-
-Example:
-  "rails g acts_as_executor:executable Executable"

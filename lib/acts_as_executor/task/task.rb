@@ -1,6 +1,6 @@
 module ActsAsExecutor
   module Task
-    class Executable
+    class Task
       include Java::java.lang.Runnable
 
       attr_accessor :arguments
