@@ -13,39 +13,41 @@ module ActsAsExecutor
 
           # Validations
           base.validates :name, :presence => true, :uniqueness => true
-          base.validates :limit, :numericality => { :only_integer => true, :greater_than_or_equal_to => 1 }, :allow_nil => true
+          base.validates :limit, :presence => true, :numericality => { :only_integer => true, :greater_than_or_equal_to => 1 }
         end
 
         private
         def startup
           log.debug log_statement name, "startup triggered"
-          self.executor = ActsAsExecutor::Executor::Factory.create limit
+          self.executor = Java::java.util.concurrent.Executors.new_scheduled_thread_pool limit.to_i
           log.info log_statement name, "started"
 
           tasks.all
         end
 
-        def execute instance, task_id, schedule = nil, start = nil, every = nil
+        def execute instance, task_id, start = nil, every = nil, every_strict = false
           begin
-            humanized_schedule = schedule ? schedule.gsub("_", " ") : "one time"
-            log.debug log_message name, "preparing", task_id, instance.class.name, "for execution (" + humanized_schedule + ")"
+            scheduled_task = !start.nil? || !every.nil?
+            log.debug log_message name, "preparing", task_id, instance.class.name, "for execution" + (scheduled_task ? " (scheduled)" : "")
 
-            if schedulable?
+            if scheduled_task
               units = Java::java.util.concurrent.TimeUnit::SECONDS
-              case schedule
-                when ActsAsExecutor::Task::Schedules::ONE_SHOT
-                  future = executor.schedule instance, start, units
-                when ActsAsExecutor::Task::Schedules::FIXED_DELAY
+
+              if every.nil?
+                future = executor.schedule instance, start, units
+              else
+                if every_strict
                   future = executor.schedule_with_fixed_delay instance, start, every, units
-                when ActsAsExecutor::Task::Schedules::FIXED_RATE
+                else
                   future = executor.schedule_at_fixed_rate instance, start, every, units
+                end
               end
             else
-              future = ActsAsExecutor::Common::FutureTask.new instance, nil
-              executor.execute future
+              future = executor.submit instance
             end
 
             log.info log_message name, "enqueued", task_id, instance.class.name
+
             future
           rescue Java::java.util.concurrent.RejectedExecutionException
             log.warn log_message name, "preparing", task_id, instance.class.name, "encountered a rejected execution exception"
