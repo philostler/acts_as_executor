@@ -6,8 +6,6 @@ require "acts_as_executor/version"
 require "acts_as_executor/common/future_task"
 require "acts_as_executor/common/instance_support_methods"
 
-require "acts_as_executor/executor/factory"
-
 require "acts_as_executor/executor/model/class_methods"
 require "acts_as_executor/executor/model/instance_methods"
 require "acts_as_executor/executor/model/instance_support_methods"
