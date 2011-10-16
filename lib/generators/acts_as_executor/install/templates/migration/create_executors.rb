@@ -13,6 +13,7 @@ class Create<%= class_name.pluralize %> < ActiveRecord::Migration
       t.integer  :start
       t.integer  :every
       t.boolean  :every_strict
+      t.datetime :started_at
       t.datetime :completed_at
       t.timestamps
     end
