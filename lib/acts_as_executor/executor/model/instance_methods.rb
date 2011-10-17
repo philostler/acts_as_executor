@@ -19,7 +19,7 @@ module ActsAsExecutor
         private
         def startup
           log.debug log_statement name, "startup triggered"
-          self.executor = Java::java.util.concurrent.Executors.new_scheduled_thread_pool limit.to_i
+          self.executor = ActsAsExecutor::Executor::Factory.create limit
           log.info log_statement name, "started"
 
           tasks.all
