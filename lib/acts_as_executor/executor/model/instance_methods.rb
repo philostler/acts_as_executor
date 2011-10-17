@@ -10,6 +10,7 @@ module ActsAsExecutor
           base.after_find :startup, :if => :startupable?
           base.after_save :startup, :if => :startupable?
           base.after_destroy :shutdown, :if => :shutdownable?
+          base.before_save :synchronise_limit, :if => :limit_changed?
 
           # Validations
           base.validates :name, :presence => true, :uniqueness => true
@@ -23,6 +24,11 @@ module ActsAsExecutor
           log.info log_statement name, "started"
 
           tasks.all
+        end
+
+        def synchronise_limit
+          executor.core_pool_size = limit
+          log.info log_statement name, "limit synchronised (" + limit_was.to_s + " => " + limit.to_s + ")"
         end
 
         def execute instance, task_id, start = nil, every = nil, every_strict = false
