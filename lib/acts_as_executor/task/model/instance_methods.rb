@@ -11,6 +11,12 @@ module ActsAsExecutor
           base.after_save :enqueue, :if => :enqueueable?
           base.after_destroy :cancel, :if => :cancelable?
 
+          # Scopes
+          base.scope :active, base.where("completed_at IS NULL")
+          base.scope :complete, base.where("completed_at IS NOT NULL")
+          base.scope :single, base.where("every IS NULL")
+          base.scope :scheduled, base.where("every IS NOT NULL")
+
           # Serialization
           base.serialize :arguments, Hash
 
@@ -41,13 +47,12 @@ module ActsAsExecutor
 
           instance.before_execute_handler = Proc.new {
             executor.send(:log).debug log_message executor.name, "started", id.to_s, task
-            started_at = Time.now
+            update_attribute :started_at, Time.now
           }
 
           instance.after_execute_handler = Proc.new {
             executor.send(:log).debug log_message executor.name, "completed", id.to_s, task
-            completed_at = Time.now
-            save
+            update_attribute :completed_at, Time.now
           }
 
           instance.uncaught_exception_handler = Proc.new {
