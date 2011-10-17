@@ -14,14 +14,14 @@ module ActsAsExecutor
         end
 
         def enqueueable?
-          if future == nil
+          if future.nil? && !every.nil? || (every.nil? && completed_at.nil?)
             return true
           end
           return false
         end
 
         def cancelable?
-          if future != nil
+          if !future.nil?
             return true
           end
           return false
