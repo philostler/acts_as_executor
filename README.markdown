@@ -1,3 +1,5 @@
+# acts_as_executor has been DEPRECATED and is no longer actively developed or maintained. This repository exists as a reference. Take a look at [Alloy][alloy] which interacts with Java's Executor framework via a fluent interface.
+
 # acts_as_executor
 
 acts_as_executor seamlessly integrates Java’s Executor framework with Ruby on Rails, enabling an application to use executors in a familiar Rails’eque way.
@@ -95,3 +97,4 @@ Attributes ```schedule```, ```start```, ```every``` and ```units``` exist on the
 [wiki]: https://github.com/philostler/acts_as_executor/wiki
 [wiki_using_executors]: https://github.com/philostler/acts_as_executor/wiki/Using-Executors
 [wiki_using_tasks]: https://github.com/philostler/acts_as_executor/wiki/Using-Tasks
+[alloy]: https://github.com/philostler/alloy
