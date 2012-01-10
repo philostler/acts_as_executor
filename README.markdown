@@ -1,4 +1,4 @@
-# acts_as_executor has been DEPRECATED and is no longer actively developed or maintained. This repository exists as a reference. Take a look at [Alloy][alloy] which interacts with Java's Executor framework via a fluent interface.
+# acts_as_executor has been DEPRECATED and is no longer actively developed or maintained. This repository exists as a reference only.
 
 # acts_as_executor
 
